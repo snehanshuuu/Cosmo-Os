@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --bg-void: #0d0e0f;
-    --surface-glass: rgba(18, 19, 20, 0.75);
+    --surface-glass: rgba(18, 24, 20, 0.75);
     --lime-primary: #aad622;
     --lime-bright: #c6f341;
   }
@@ -38,6 +38,25 @@
   }
 }
 
+/* Glassmorphic dock container & widget card styling */
+.glass-dock-container,
+.glass-widget-card {
+  background-color: rgba(18, 24, 20, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dock Icon Smooth Hover & Neon Accent Glow */
+.dock-icon-wrapper {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dock-icon-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 12px rgba(120, 255, 100, 0.3);
+}
+
 /* Glassmorphic border glow effect */
 .glass-border {
   box-shadow: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.12), inset -1px -1px 0px 0px rgba(0, 0, 0, 0.4);
@@ -58,3 +77,28 @@
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
+
+/* Equalizer Visualizer Keyframe Animations */
+@keyframes eqPulse {
+  0% {
+    height: 4px;
+    opacity: 0.5;
+  }
+  50% {
+    height: 24px;
+    opacity: 1;
+  }
+  100% {
+    height: 10px;
+    opacity: 0.8;
+  }
+}
+
+.animate-eq-bar-1 { animation: eqPulse 0.45s ease-in-out infinite alternate; }
+.animate-eq-bar-2 { animation: eqPulse 0.65s ease-in-out 0.1s infinite alternate; }
+.animate-eq-bar-3 { animation: eqPulse 0.35s ease-in-out 0.2s infinite alternate; }
+.animate-eq-bar-4 { animation: eqPulse 0.8s ease-in-out 0.05s infinite alternate; }
+.animate-eq-bar-5 { animation: eqPulse 0.5s ease-in-out 0.25s infinite alternate; }
+.animate-eq-bar-6 { animation: eqPulse 0.7s ease-in-out 0.15s infinite alternate; }
+.animate-eq-bar-7 { animation: eqPulse 0.4s ease-in-out 0.3s infinite alternate; }
+.animate-eq-bar-8 { animation: eqPulse 0.6s ease-in-out 0.08s infinite alternate; }

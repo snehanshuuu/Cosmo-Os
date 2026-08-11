@@ -7,39 +7,67 @@ export const MusicWidget: React.FC = () => {
   const currentTrack = playlist.find((t) => t.id === currentTrackId) || playlist[0];
 
   return (
-    <div className="flex flex-col gap-2 w-48 font-mono text-xs">
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="flex flex-col gap-2 w-48 font-mono text-xs select-none"
+    >
       <div className="flex justify-between items-center text-[10px] text-cosmos-text-muted border-b border-white/10 pb-1">
-        <span className="uppercase tracking-wider">MINI PLAYER</span>
+        <span className="uppercase tracking-wider font-bold text-white">MINI PLAYER</span>
+        {isPlaying && (
+          <span className="text-[9px] font-bold text-[#00E5FF] uppercase tracking-wider animate-pulse">
+            PLAYING
+          </span>
+        )}
       </div>
+
       <div className="flex items-center gap-3">
         <div
-          className={`w-9 h-9 rounded-full border border-white/20 bg-black flex items-center justify-center ${
-            isPlaying ? 'animate-spin' : ''
+          className={`w-10 h-10 rounded-full border border-white/20 bg-black flex items-center justify-center relative shadow-md ${
+            isPlaying ? 'animate-[spin_6s_linear_infinite]' : ''
           }`}
         >
           <Icons.Music className="w-4 h-4 text-cosmos-lime-bright" />
+          <div className="absolute inset-0 rounded-full border border-[#00E5FF]/30 pointer-events-none" />
         </div>
         <div className="flex-1 truncate">
-          <span className="font-bold text-white block truncate">{currentTrack.title}</span>
+          <span className="font-bold text-white block truncate text-[11px]">{currentTrack.title}</span>
           <span className="text-[10px] text-cosmos-text-muted truncate block">{currentTrack.artist}</span>
         </div>
       </div>
-      <div className="flex justify-end gap-2 pt-1 border-t border-white/5">
+
+      {/* 8-Bar Dynamic Neon Equalizer Visualizer */}
+      <div className="flex items-end justify-center gap-1.5 h-6 w-full py-1 overflow-hidden bg-black/40 rounded border border-white/5">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((barNum) => (
+          <div
+            key={barNum}
+            className={`w-1.5 rounded-t transition-all ${
+              isPlaying
+                ? `bg-gradient-to-t from-[#7CFF00] to-[#00E5FF] shadow-[0_0_8px_#00E5FF] animate-eq-bar-${barNum}`
+                : 'h-1 bg-white/20 opacity-30'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Playback Controls */}
+      <div className="flex justify-end items-center gap-2 pt-1 border-t border-white/5">
         <button
           onClick={(e) => {
             e.stopPropagation();
             togglePlay();
           }}
-          className="p-1 rounded bg-cosmos-lime text-black hover:bg-cosmos-lime-bright"
+          className="p-1.5 rounded-md bg-cosmos-lime text-black hover:bg-cosmos-lime-bright transition-colors shadow-lime-glow flex items-center justify-center"
+          title={isPlaying ? 'Pause' : 'Play'}
         >
-          {isPlaying ? <Icons.Pause className="w-3.5 h-3.5" /> : <Icons.Play className="w-3.5 h-3.5" />}
+          {isPlaying ? <Icons.Pause className="w-3.5 h-3.5 fill-black" /> : <Icons.Play className="w-3.5 h-3.5 fill-black translate-x-0.5" />}
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             nextTrack();
           }}
-          className="p-1 rounded bg-white/10 text-white hover:bg-white/20"
+          className="p-1.5 rounded-md bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center"
+          title="Next Track"
         >
           <Icons.SkipForward className="w-3.5 h-3.5" />
         </button>

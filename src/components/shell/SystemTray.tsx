@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import * as Icons from 'lucide-react';
 
 interface SystemTrayProps {
@@ -12,59 +12,49 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
   onToggleQuickSettings,
   onOpenSearch,
 }) => {
-  const [timeStr, setTimeStr] = useState('');
-
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      setTimeStr(
-        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-      );
-    };
-    updateClock();
-    const interval = setInterval(updateClock, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="flex items-center gap-3 font-mono text-xs text-cosmos-text-primary">
-      {/* Global Search Button */}
+      {/* Global Search Shortcut Button with Spaced Styling */}
       <button
         onClick={onOpenSearch}
-        className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/15 text-cosmos-text-secondary hover:text-white transition-colors"
-        title="Search (Cmd+K)"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 hover:bg-white/15 text-cosmos-text-secondary hover:text-white transition-colors"
+        title="Search (Cmd + K)"
       >
         <Icons.Search className="w-3.5 h-3.5 text-cosmos-lime-bright" />
-        <span className="text-[10px]">Cmd+K</span>
+        <span className="text-[10px] font-mono tracking-wide">Cmd + K</span>
       </button>
 
-      {/* Network Indicator */}
-      <div className="flex items-center gap-1 text-cosmos-lime-bright" title="Network Connected">
-        <Icons.Wifi className="w-3.5 h-3.5" />
-      </div>
-
-      {/* Battery Indicator */}
-      <div className="flex items-center gap-1 text-cosmos-text-primary" title="Battery 98%">
-        <Icons.Battery className="w-4 h-4 text-cosmos-lime" />
-        <span className="text-[11px]">98%</span>
+      {/* Quick Status Icon Group: Network & Battery */}
+      <div className="flex items-center gap-2 px-2 py-0.5 rounded-md bg-black/40 border border-white/5">
+        <div className="flex items-center gap-1 text-cosmos-lime-bright" title="Network Connected">
+          <Icons.Wifi className="w-3.5 h-3.5" />
+        </div>
+        <div className="h-3 w-px bg-white/10" />
+        <div className="flex items-center gap-1 text-cosmos-text-primary" title="Battery 98%">
+          <Icons.Battery className="w-3.5 h-3.5 text-cosmos-lime" />
+          <span className="text-[10px]">98%</span>
+        </div>
       </div>
 
       {/* Quick Settings Toggle Button */}
       <button
         onClick={onToggleQuickSettings}
-        className="p-1 rounded hover:bg-white/10 text-cosmos-text-secondary hover:text-white"
+        className="p-1.5 rounded-md bg-white/5 border border-white/10 hover:bg-white/15 text-cosmos-text-secondary hover:text-white transition-colors"
         title="Quick Control Center"
       >
         <Icons.SlidersHorizontal className="w-3.5 h-3.5" />
       </button>
 
-      {/* Clock Widget Button */}
+      {/* User Profile / Status Trigger Button (Replacing redundant digital clock) */}
       <button
         onClick={onToggleCalendar}
-        className="px-2 py-1 rounded hover:bg-white/10 font-bold text-white tracking-tight"
-        title="Open Calendar"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-cosmos-lime/10 border border-cosmos-lime/30 text-cosmos-lime-bright hover:bg-cosmos-lime hover:text-black transition-all group"
+        title="User Profile & Calendar (Click to toggle)"
       >
-        {timeStr || '12:00 PM'}
+        <div className="w-4 h-4 rounded-full bg-cosmos-lime text-black flex items-center justify-center font-bold text-[9px] shadow-lime-glow group-hover:bg-black group-hover:text-cosmos-lime">
+          <Icons.User className="w-2.5 h-2.5 stroke-[2.5]" />
+        </div>
+        <span className="text-[10px] font-mono font-bold tracking-tight">Admin</span>
       </button>
     </div>
   );

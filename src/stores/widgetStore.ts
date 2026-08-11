@@ -5,12 +5,14 @@ const LOCAL_STORAGE_KEY = 'cosmos_os_widgets';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
   { id: 'w-clock', type: 'clock', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 185 }, isVisible: true },
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 400 }, isVisible: true },
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 30, y: 220 }, isVisible: true },
+  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 460 }, isVisible: true },
+  { id: 'w-weather', type: 'weather', position: { x: 30, y: 675 }, isVisible: true },
   { id: 'w-notes', type: 'notes', position: { x: 1220, y: 50 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 1220, y: 185 }, isVisible: true },
-  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 395 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 510 }, isVisible: true },
+  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 1220, y: 200 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 1220, y: 395 }, isVisible: true },
+  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 560 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 670 }, isVisible: true },
 ];
 
 const loadWidgets = (): WidgetState[] => {

@@ -8,6 +8,8 @@ import { NotesWidget } from './NotesWidget';
 import { MusicWidget } from './MusicWidget';
 import { QuickActionsWidget } from './QuickActionsWidget';
 import { SystemStatsWidget } from './SystemStatsWidget';
+import { TerminalStreamWidget } from './TerminalStreamWidget';
+import { GlobalNodeClockWidget } from './GlobalNodeClockWidget';
 
 export const WidgetLayer: React.FC = () => {
   const { widgets, updatePosition } = useWidgetStore();
@@ -28,6 +30,10 @@ export const WidgetLayer: React.FC = () => {
         return <QuickActionsWidget />;
       case 'system-stats':
         return <SystemStatsWidget />;
+      case 'terminal-stream':
+        return <TerminalStreamWidget />;
+      case 'global-node-clock':
+        return <GlobalNodeClockWidget />;
       default:
         return null;
     }

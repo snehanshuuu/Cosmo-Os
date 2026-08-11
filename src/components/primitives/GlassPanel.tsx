@@ -9,6 +9,7 @@ export interface GlassPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverEffect?: boolean;
   glow?: boolean;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const GlassPanel: React.FC<GlassPanelProps> = ({
@@ -18,19 +19,20 @@ export const GlassPanel: React.FC<GlassPanelProps> = ({
   hoverEffect = false,
   glow = false,
   className,
+  style,
   ...props
 }) => {
   const variantStyles = {
     default: 'bg-cosmos-surface/70 backdrop-blur-glass rounded-lg border border-white/10 glass-border',
-    card: 'bg-cosmos-container-low/80 backdrop-blur-glass rounded-lg border border-white/10 glass-border',
-    dock: 'bg-cosmos-surface-bright/40 backdrop-blur-heavy rounded-full border border-white/20 shadow-glass',
+    card: 'glass-widget-card rounded-xl shadow-glass',
+    dock: 'glass-dock-container rounded-full shadow-glass',
     window: 'bg-cosmos-surface/85 backdrop-blur-glass rounded-xl border border-white/15 shadow-2xl glass-border',
     modal: 'bg-cosmos-container-high/90 backdrop-blur-heavy rounded-xl border border-white/20 shadow-glass',
     container: 'bg-cosmos-container/60 backdrop-blur-sm rounded-md border border-white/5',
   };
 
   const activeStyles = active
-    ? 'border-cosmos-lime-lime/60 shadow-lime-glow glass-border-active'
+    ? 'border-cosmos-lime/60 shadow-lime-glow glass-border-active'
     : '';
 
   const hoverStyles = hoverEffect
@@ -39,8 +41,21 @@ export const GlassPanel: React.FC<GlassPanelProps> = ({
 
   const glowStyles = glow ? 'shadow-lime-glow' : '';
 
+  const customStyle: React.CSSProperties = {
+    ...(variant === 'dock' || variant === 'card'
+      ? {
+          backgroundColor: 'rgba(18, 24, 20, 0.75)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      : {}),
+    ...style,
+  };
+
   return (
     <div
+      style={customStyle}
       className={twMerge(
         clsx(
           variantStyles[variant],

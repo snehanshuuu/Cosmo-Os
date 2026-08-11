@@ -124,16 +124,16 @@ export const MusicPlayerApp: React.FC = () => {
       </div>
 
       {/* Rotating CD Visualizer */}
-      <div className="flex flex-col items-center justify-center my-3">
+      <div className="flex flex-col items-center justify-center my-2">
         <div className="relative">
           <div
-            className={`w-32 h-32 rounded-full border-4 border-white/20 bg-gradient-to-tr from-cosmos-surface-bright to-black flex items-center justify-center shadow-lime-glow transition-all ${
+            className={`w-28 h-28 rounded-full border-4 border-white/20 bg-gradient-to-tr from-cosmos-surface-bright to-black flex items-center justify-center shadow-lime-glow transition-all ${
               isPlaying ? 'animate-[spin_8s_linear_infinite]' : ''
             }`}
           >
-            <div className="w-10 h-10 rounded-full border-2 border-white/40 bg-cosmos-bg flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full border-2 border-white/40 bg-cosmos-bg flex items-center justify-center">
               <div
-                className={`w-3 h-3 rounded-full ${
+                className={`w-2.5 h-2.5 rounded-full ${
                   isPlaying ? 'bg-cosmos-lime shadow-lime-glow' : 'bg-white/40'
                 }`}
               />
@@ -144,9 +144,23 @@ export const MusicPlayerApp: React.FC = () => {
         <h3 className="text-base font-display font-bold text-white mt-3 truncate max-w-full">
           {currentTrack.title}
         </h3>
-        <p className="text-xs font-mono text-cosmos-text-secondary truncate max-w-full">
+        <p className="text-xs font-mono text-cosmos-text-secondary truncate max-w-full mb-2">
           {currentTrack.artist} • {currentTrack.album}
         </p>
+
+        {/* 8-Bar Dynamic Neon Equalizer Visualizer Underneath Track Title */}
+        <div className="flex items-end justify-center gap-1.5 h-7 w-48 my-1 overflow-hidden bg-black/50 rounded-lg p-1 border border-white/10">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((barNum) => (
+            <div
+              key={barNum}
+              className={`w-2 rounded-t transition-all ${
+                isPlaying
+                  ? `bg-gradient-to-t from-[#7CFF00] to-[#00E5FF] shadow-[0_0_10px_#00E5FF] animate-eq-bar-${barNum}`
+                  : 'h-1 bg-white/20 opacity-30'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Seek Progress Bar */}

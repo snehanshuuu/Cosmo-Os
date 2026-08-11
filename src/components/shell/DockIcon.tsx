@@ -12,7 +12,7 @@ interface DockIconProps {
 }
 
 export const DockIcon: React.FC<DockIconProps> = ({ app, isOpen, isMinimized, size }) => {
-  const { openApp, windows, bringToFront, minimizeWindow } = useWindowStore();
+  const { openApp, windows, bringToFront } = useWindowStore();
   const [isHovered, setIsHovered] = useState(false);
   const [isBouncing, setIsBouncing] = useState(false);
 
@@ -25,12 +25,7 @@ export const DockIcon: React.FC<DockIconProps> = ({ app, isOpen, isMinimized, si
 
     const existingWindow = windows.find((w) => w.appId === app.id);
     if (existingWindow) {
-      if (existingWindow.state === 'minimized') {
-        bringToFront(existingWindow.id);
-      } else {
-        // Toggle minimize if already active window
-        bringToFront(existingWindow.id);
-      }
+      bringToFront(existingWindow.id);
     } else {
       openApp(app.id, app.name, app.icon);
     }
@@ -55,16 +50,20 @@ export const DockIcon: React.FC<DockIconProps> = ({ app, isOpen, isMinimized, si
         </motion.div>
       )}
 
-      {/* Dock Icon Enclosure */}
+      {/* Dock Icon Enclosure with Hover translateY(-4px), transition 0.2s ease-in-out, and neon accent glow */}
       <motion.div
         animate={
           isBouncing
             ? { y: [0, -14, 0, -6, 0] }
-            : { scale: isHovered ? 1.25 : 1 }
+            : { y: isHovered ? -4 : 0, scale: isHovered ? 1.15 : 1 }
         }
-        transition={{ duration: isBouncing ? 0.5 : 0.15 }}
-        style={{ width: size, height: size }}
-        className={`rounded-2xl flex items-center justify-center transition-all duration-150 ${
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
+        style={{
+          width: size,
+          height: size,
+          boxShadow: isHovered ? '0 0 12px rgba(120, 255, 100, 0.3)' : undefined,
+        }}
+        className={`rounded-2xl flex items-center justify-center transition-all duration-200 ease-in-out dock-icon-wrapper ${
           isOpen
             ? 'bg-cosmos-surface-container-high/90 text-cosmos-lime-bright border border-cosmos-lime/40 shadow-lime-glow'
             : 'bg-cosmos-surface-container/70 text-cosmos-text-primary hover:bg-cosmos-surface-container-high hover:border hover:border-white/20'

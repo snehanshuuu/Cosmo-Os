@@ -53,6 +53,7 @@ declare module 'lucide-react' {
   export const Pause: React.FC<IconProps>;
   export const Repeat: React.FC<IconProps>;
   export const Cloud: React.FC<IconProps>;
+  export const User: React.FC<IconProps>;
 
   const icons: Record<string, React.FC<IconProps>>;
   export default icons;

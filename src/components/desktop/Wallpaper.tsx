@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSettingsStore } from '../../stores/settingsStore';
+import { CanvasBackgroundOverlay } from './CanvasBackgroundOverlay';
 
 export const Wallpaper: React.FC = () => {
   const { wallpaper } = useSettingsStore();
@@ -69,6 +70,8 @@ export const Wallpaper: React.FC = () => {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
       {renderWallpaperStyle()}
+      {/* Subtle Canvas Background Overlay with Matrix Grid and Mouse Cursor Tracking Ambient Glow */}
+      <CanvasBackgroundOverlay />
       <div className="absolute inset-0 bg-black/15 backdrop-brightness-95 pointer-events-none" />
     </div>
   );
