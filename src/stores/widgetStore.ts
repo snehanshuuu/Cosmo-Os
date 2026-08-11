@@ -4,24 +4,24 @@ import { WidgetState, WidgetType, WindowPosition } from '../types';
 export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
 export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
-const getCenteredX = () => {
-  if (typeof window !== 'undefined' && window.innerWidth) {
-    return Math.max(50, Math.floor((window.innerWidth - 260) / 2));
-  }
-  return 580;
-};
-
 const DEFAULT_WIDGETS: WidgetState[] = [
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: getCenteredX(), y: 50 }, isVisible: true },
-  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 290 }, isVisible: true },
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 500 }, isVisible: true },
-  { id: 'w-notes', type: 'notes', position: { x: 1220, y: 50 }, isVisible: true },
-  { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 200 }, isVisible: true },
-  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 1220, y: 360 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 1220, y: 555 }, isVisible: true },
-  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 830 }, isVisible: true },
+  // Left Column: Weather -> Terminal Stream -> System Diagnostics
+  { id: 'w-weather', type: 'weather', position: { x: 30, y: 50 }, isVisible: true },
+  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 260 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 560 }, isVisible: true },
+
+  // Center Area: Global Node Clock & Mini Player
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 480, y: 190 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 770, y: 250 }, isVisible: true },
+
+  // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
+  { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
+  { id: 'w-calendar', type: 'calendar', position: { x: 1220, y: 300 }, isVisible: true },
+  { id: 'w-notes', type: 'notes', position: { x: 1220, y: 560 }, isVisible: true },
+  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 730 }, isVisible: true },
+
+  // Display & Theme Control (Available in settings)
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 770, y: 500 }, isVisible: false },
 ];
 
 const loadWidgets = (): WidgetState[] => {
@@ -32,15 +32,6 @@ const loadWidgets = (): WidgetState[] => {
       if (Array.isArray(parsed) && parsed.length > 0) {
         // Remove legacy standard digital clock if present
         const filtered = parsed.filter((w) => w.type !== 'clock');
-        const globalClockIdx = filtered.findIndex((w) => w.type === 'global-node-clock');
-        if (globalClockIdx === -1) {
-          filtered.unshift({
-            id: 'w-global-node-clock',
-            type: 'global-node-clock',
-            position: { x: getCenteredX(), y: 50 },
-            isVisible: true,
-          });
-        }
         return filtered;
       }
     }
