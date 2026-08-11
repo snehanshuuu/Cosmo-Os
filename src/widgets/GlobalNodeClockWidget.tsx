@@ -54,8 +54,17 @@ export const GlobalNodeClockWidget: React.FC = () => {
       </div>
 
       {/* Main Digital Clock Readout */}
-      <div className="text-3xl font-extrabold font-display text-white tracking-tight text-center py-1 drop-shadow-[0_0_12px_rgba(0,240,255,0.3)]">
+      <div className="text-3xl font-extrabold font-display text-white tracking-tight text-center py-0.5 drop-shadow-[0_0_12px_rgba(0,240,255,0.3)]">
         {localTimeStr}
+      </div>
+
+      {/* Integrated Live Weather Summary Banner */}
+      <div className="flex items-center justify-between bg-black/40 px-2.5 py-1 rounded border border-white/10 text-[10px]">
+        <span className="text-cosmos-text-muted font-bold uppercase">Cyber City Weather</span>
+        <div className="flex items-center gap-1.5 font-bold text-amber-300">
+          <Icons.Sun className="w-3.5 h-3.5 text-amber-400" />
+          <span>72°F · Clear</span>
+        </div>
       </div>
 
       {/* Minimalist World Grid Map Vector with Blinking Pulse Dots over Tech Hubs */}
@@ -76,53 +85,56 @@ export const GlobalNodeClockWidget: React.FC = () => {
         {/* Pulse Dot 1: London (UTC) */}
         <div
           className="absolute top-6 left-[48%] -translate-x-1/2 flex items-center gap-1 group cursor-pointer"
-          title={`London (UTC): ${utcTime}`}
+          title={`London (UTC): ${utcTime} • 16°C Rain`}
         >
           <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00F0FF] animate-ping" />
           <span className="absolute w-2 h-2 rounded-full bg-cyan-400" />
           <span className="text-[8px] font-mono font-bold text-cyan-300 ml-3 bg-black/70 px-1 rounded border border-cyan-400/30">
-            LON
+            LON 16°C
           </span>
         </div>
 
         {/* Pulse Dot 2: Tokyo (JST) */}
         <div
           className="absolute top-7 left-[82%] -translate-x-1/2 flex items-center gap-1 group cursor-pointer"
-          title={`Tokyo (JST): ${jstTime}`}
+          title={`Tokyo (JST): ${jstTime} • 25°C Cloudy`}
         >
           <span className="w-2 h-2 rounded-full bg-cosmos-lime shadow-lime-glow animate-ping" />
           <span className="absolute w-2 h-2 rounded-full bg-cosmos-lime" />
           <span className="text-[8px] font-mono font-bold text-cosmos-lime-bright ml-3 bg-black/70 px-1 rounded border border-cosmos-lime/30">
-            TYO
+            TYO 25°C
           </span>
         </div>
 
         {/* Pulse Dot 3: Cyber City / NY (EST) */}
         <div
           className="absolute top-9 left-[26%] -translate-x-1/2 flex items-center gap-1 group cursor-pointer"
-          title={`Cyber City (EST): ${estTime}`}
+          title={`Cyber City (EST): ${estTime} • 72°F Clear`}
         >
           <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#FFC107] animate-ping" />
           <span className="absolute w-2 h-2 rounded-full bg-amber-400" />
           <span className="text-[8px] font-mono font-bold text-amber-300 ml-3 bg-black/70 px-1 rounded border border-amber-400/30">
-            EST
+            EST 72°F
           </span>
         </div>
       </div>
 
-      {/* 3 World Time Zones in Monospaced Font */}
+      {/* 3 World Time Zones with Temperature Metrics */}
       <div className="grid grid-cols-3 gap-1.5 text-center border-t border-white/10 pt-2">
         <div className="p-1.5 rounded bg-black/40 border border-white/5 flex flex-col">
           <span className="text-[9px] text-cosmos-text-muted font-bold uppercase">UTC / LON</span>
           <span className="text-xs font-mono font-bold text-cyan-300 mt-0.5">{utcTime}</span>
+          <span className="text-[9px] text-cyan-200/80 font-mono">16°C 🌧️</span>
         </div>
         <div className="p-1.5 rounded bg-black/40 border border-white/5 flex flex-col">
           <span className="text-[9px] text-cosmos-text-muted font-bold uppercase">JST / TYO</span>
           <span className="text-xs font-mono font-bold text-cosmos-lime-bright mt-0.5">{jstTime}</span>
+          <span className="text-[9px] text-cosmos-lime/80 font-mono">25°C ⛅</span>
         </div>
         <div className="p-1.5 rounded bg-black/40 border border-white/5 flex flex-col">
           <span className="text-[9px] text-cosmos-text-muted font-bold uppercase">EST / CYBER</span>
           <span className="text-xs font-mono font-bold text-amber-300 mt-0.5">{estTime}</span>
+          <span className="text-[9px] text-amber-200/80 font-mono">72°F ☀️</span>
         </div>
       </div>
     </div>
