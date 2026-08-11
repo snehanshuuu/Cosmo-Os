@@ -1,120 +1,93 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 
 export const CalculatorApp: React.FC = () => {
   const [display, setDisplay] = useState('0');
   const [equation, setEquation] = useState('');
   const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
 
-  const handleNumber = useCallback((digit: string) => {
-    setDisplay((prevDisplay) => {
-      if (prevDisplay === '0' || shouldResetDisplay) {
-        setShouldResetDisplay(false);
-        return digit;
+  const handleNumber = (digit: string) => {
+    if (display === '0' || shouldResetDisplay) {
+      setDisplay(digit);
+      setShouldResetDisplay(false);
+    } else {
+      if (display.length < 12) {
+        setDisplay(display + digit);
       }
-      if (prevDisplay.length < 12) {
-        return prevDisplay + digit;
-      }
-      return prevDisplay;
-    });
-  }, [shouldResetDisplay]);
+    }
+  };
 
-  const handleDecimal = useCallback(() => {
-    setDisplay((prevDisplay) => {
-      if (shouldResetDisplay) {
-        setShouldResetDisplay(false);
-        return '0.';
-      }
-      if (!prevDisplay.includes('.')) {
-        return prevDisplay + '.';
-      }
-      return prevDisplay;
-    });
-  }, [shouldResetDisplay]);
+  const handleDecimal = () => {
+    if (shouldResetDisplay) {
+      setDisplay('0.');
+      setShouldResetDisplay(false);
+      return;
+    }
+    if (!display.includes('.')) {
+      setDisplay(display + '.');
+    }
+  };
 
-  const handleOperator = useCallback((op: string) => {
-    setDisplay((prevDisplay) => {
-      setEquation(`${prevDisplay} ${op}`);
-      setShouldResetDisplay(true);
-      return prevDisplay;
-    });
-  }, []);
+  const handleOperator = (op: string) => {
+    setEquation(`${display} ${op}`);
+    setShouldResetDisplay(true);
+  };
 
-  const handleClear = useCallback(() => {
+  const handleClear = () => {
     setDisplay('0');
     setEquation('');
     setShouldResetDisplay(false);
-  }, []);
+  };
 
-  const handleToggleSign = useCallback(() => {
-    setDisplay((prevDisplay) => {
-      if (prevDisplay === '0') return prevDisplay;
-      return prevDisplay.startsWith('-') ? prevDisplay.slice(1) : '-' + prevDisplay;
-    });
-  }, []);
+  const handleToggleSign = () => {
+    if (display === '0') return;
+    setDisplay(display.startsWith('-') ? display.slice(1) : '-' + display);
+  };
 
-  const handlePercentage = useCallback(() => {
-    setDisplay((prevDisplay) => {
-      const val = parseFloat(prevDisplay);
-      if (!isNaN(val)) {
-        return (val / 100).toString();
-      }
-      return prevDisplay;
-    });
-  }, []);
+  const handlePercentage = () => {
+    const val = parseFloat(display);
+    if (!isNaN(val)) {
+      setDisplay((val / 100).toString());
+    }
+  };
 
-  const handleEvaluate = useCallback(() => {
-    setEquation((prevEquation) => {
-      if (!prevEquation) return '';
-      const parts = prevEquation.split(' ');
-      const firstNum = parseFloat(parts[0]);
-      const operator = parts[1];
+  const handleEvaluate = () => {
+    if (!equation) return;
+    const parts = equation.split(' ');
+    const firstNum = parseFloat(parts[0]);
+    const operator = parts[1];
+    const secondNum = parseFloat(display);
 
-      setDisplay((prevDisplay) => {
-        const secondNum = parseFloat(prevDisplay);
-        if (isNaN(firstNum) || isNaN(secondNum)) return prevDisplay;
+    if (isNaN(firstNum) || isNaN(secondNum)) return;
 
-        let result = 0;
-        switch (operator) {
-          case '+':
-            result = firstNum + secondNum;
-            break;
-          case '-':
-            result = firstNum - secondNum;
-            break;
-          case '×':
-            result = firstNum * secondNum;
-            break;
-          case '÷':
-            if (secondNum === 0) {
-              setShouldResetDisplay(true);
-              return 'Error';
-            }
-            result = firstNum / secondNum;
-            break;
-          default:
-            return prevDisplay;
+    let result = 0;
+    switch (operator) {
+      case '+':
+        result = firstNum + secondNum;
+        break;
+      case '-':
+        result = firstNum - secondNum;
+        break;
+      case '×':
+        result = firstNum * secondNum;
+        break;
+      case '÷':
+        if (secondNum === 0) {
+          setDisplay('Error');
+          setEquation('');
+          setShouldResetDisplay(true);
+          return;
         }
+        result = firstNum / secondNum;
+        break;
+      default:
+        return;
+    }
 
-        const resultStr = Number.isInteger(result)
-          ? result.toString()
-          : result.toFixed(4).replace(/\.?0+$/, '');
-        setShouldResetDisplay(true);
-        return resultStr;
-      });
-
-      return '';
-    });
-  }, []);
-
-  const handleBackspace = useCallback(() => {
-    setDisplay((prevDisplay) => {
-      if (shouldResetDisplay || prevDisplay.length <= 1 || prevDisplay === 'Error') {
-        setShouldResetDisplay(false);
-        return '0';
-      }
-      return prevDisplay.slice(0, -1);
-    });
-  }, [shouldResetDisplay]);
+    const resultStr = Number.isInteger(result) ? result.toString() : result.toFixed(4).replace(/\.?0+$/, '');
+    setDisplay(resultStr);
+    setEquation('');
+    setShouldResetDisplay(true);
+  };
 
   const handleButtonClick = (btn: string) => {
     if (btn >= '0' && btn <= '9') {
@@ -133,60 +106,6 @@ export const CalculatorApp: React.FC = () => {
       handleOperator(btn);
     }
   };
-
-  // Keyboard Event Listener for physical Numpad & number keys
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Avoid intercepting input if typing inside an active input field outside calculator
-      const targetTag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (targetTag === 'input' || targetTag === 'textarea') return;
-
-      const key = e.key;
-
-      if (key >= '0' && key <= '9') {
-        e.preventDefault();
-        handleNumber(key);
-      } else if (key === '.' || key === ',') {
-        e.preventDefault();
-        handleDecimal();
-      } else if (key === '+') {
-        e.preventDefault();
-        handleOperator('+');
-      } else if (key === '-') {
-        e.preventDefault();
-        handleOperator('-');
-      } else if (key === '*' || key === 'x' || key === 'X') {
-        e.preventDefault();
-        handleOperator('×');
-      } else if (key === '/') {
-        e.preventDefault();
-        handleOperator('÷');
-      } else if (key === 'Enter' || key === '=') {
-        e.preventDefault();
-        handleEvaluate();
-      } else if (key === 'Backspace') {
-        e.preventDefault();
-        handleBackspace();
-      } else if (key === 'Escape' || key === 'c' || key === 'C') {
-        e.preventDefault();
-        handleClear();
-      } else if (key === '%') {
-        e.preventDefault();
-        handlePercentage();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
-    handleNumber,
-    handleDecimal,
-    handleOperator,
-    handleEvaluate,
-    handleBackspace,
-    handleClear,
-    handlePercentage,
-  ]);
 
   const buttons = [
     ['C', '±', '%', '÷'],

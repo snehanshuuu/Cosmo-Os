@@ -30,8 +30,20 @@ const loadWidgets = (): WidgetState[] => {
     if (saved) {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Remove legacy standard digital clock if present
-        return parsed.filter((w) => w.type !== 'clock');
+        // Filter out legacy clock and ensure Global Node Clock is present and visible
+        const filtered = parsed.filter((w) => w.type !== 'clock');
+        const nodeClock = filtered.find((w) => w.type === 'global-node-clock');
+        if (!nodeClock) {
+          filtered.unshift({
+            id: 'w-global-node-clock',
+            type: 'global-node-clock',
+            position: { x: 480, y: 190 },
+            isVisible: true,
+          });
+        } else {
+          nodeClock.isVisible = true;
+        }
+        return filtered;
       }
     }
   } catch (e) {
