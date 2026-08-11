@@ -12,6 +12,7 @@ import { TerminalStreamWidget } from './TerminalStreamWidget';
 import { GlobalNodeClockWidget } from './GlobalNodeClockWidget';
 import { NetworkTelemetryWidget } from './NetworkTelemetryWidget';
 import { DisplayThemeWidget } from './DisplayThemeWidget';
+import { TasksWidget } from './TasksWidget';
 
 export const WidgetLayer: React.FC = () => {
   const { widgets, updatePosition, hydrateWidgetLayout } = useWidgetStore();
@@ -44,6 +45,8 @@ export const WidgetLayer: React.FC = () => {
         return <NetworkTelemetryWidget />;
       case 'theme-display-control':
         return <DisplayThemeWidget />;
+      case 'tasks':
+        return <TasksWidget />;
       default:
         return null;
     }

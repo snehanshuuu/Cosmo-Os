@@ -89,7 +89,8 @@ export type WidgetType =
   | 'terminal-stream'
   | 'global-node-clock'
   | 'network-telemetry'
-  | 'theme-display-control';
+  | 'theme-display-control'
+  | 'tasks';
 
 export interface WidgetState {
   id: string;

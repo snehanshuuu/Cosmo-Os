@@ -67,6 +67,7 @@ export const SettingsApp: React.FC = () => {
     { type: 'terminal-stream', name: 'Terminal Stream Widget', icon: 'Terminal', desc: 'Live scrolling system logs & interactive prompt' },
     { type: 'calendar', name: 'Calendar Widget', icon: 'Calendar', desc: 'Mini month calendar view highlighting today' },
     { type: 'weather', name: 'Weather Widget', icon: 'Sun', desc: 'Live temperature, condition, and location' },
+    { type: 'tasks', name: 'Cyber Tasks / To-Do', icon: 'Check', desc: 'Desktop task checklist with quick add & progress tracker' },
     { type: 'notes', name: 'Notes Scratchpad', icon: 'FileText', desc: 'Quick note viewer on desktop' },
     { type: 'music', name: 'Music Player Widget', icon: 'Music', desc: 'Mini audio playback controls' },
     { type: 'quick-actions', name: 'Quick Actions', icon: 'Sliders', desc: 'Wi-Fi, Bluetooth, DND toggles' },

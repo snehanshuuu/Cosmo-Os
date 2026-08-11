@@ -62,7 +62,7 @@ export const TerminalStreamWidget: React.FC = () => {
       responseEntry = {
         id: `r-${Date.now()}`,
         type: 'response',
-        text: 'COMMANDS: help, clear, ping, status, echo <msg>',
+        text: 'COMMANDS: help, ping, status, whoami, top, uptime, date, ls, clear, echo <msg>',
       };
     } else if (lower === 'clear') {
       setLogs([]);
@@ -71,13 +71,43 @@ export const TerminalStreamWidget: React.FC = () => {
       responseEntry = {
         id: `r-${Date.now()}`,
         type: 'response',
-        text: 'PONG :: 12ms [vibewquest-be.onrender.com]',
+        text: 'PONG :: 12ms [cosmos-os-node.mainnet]',
       };
     } else if (lower === 'status') {
       responseEntry = {
         id: `r-${Date.now()}`,
         type: 'response',
-        text: 'STATUS :: ALL SYSTEMS OPTIMAL',
+        text: 'STATUS :: ALL SYSTEMS OPTIMAL [120 FPS]',
+      };
+    } else if (lower === 'whoami') {
+      responseEntry = {
+        id: `r-${Date.now()}`,
+        type: 'response',
+        text: 'admin@cosmos-os (System Commander)',
+      };
+    } else if (lower === 'top') {
+      responseEntry = {
+        id: `r-${Date.now()}`,
+        type: 'response',
+        text: 'CPU: 24% | RAM: 68% | 8 Cores Active',
+      };
+    } else if (lower === 'uptime') {
+      responseEntry = {
+        id: `r-${Date.now()}`,
+        type: 'response',
+        text: 'UPTIME: 4 days, 12 hours, 38 mins',
+      };
+    } else if (lower === 'date') {
+      responseEntry = {
+        id: `r-${Date.now()}`,
+        type: 'response',
+        text: new Date().toLocaleString(),
+      };
+    } else if (lower === 'ls') {
+      responseEntry = {
+        id: `r-${Date.now()}`,
+        type: 'response',
+        text: 'system/  desktop/  apps/  logs/  kernel.bin',
       };
     } else if (lower.startsWith('echo ')) {
       responseEntry = {
@@ -141,7 +171,7 @@ export const TerminalStreamWidget: React.FC = () => {
           type="text"
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
-          placeholder="help, ping..."
+          placeholder="help, ping, status, whoami..."
           className="flex-1 bg-transparent text-[10px] font-mono text-white focus:outline-none placeholder:text-cosmos-text-muted/60"
         />
       </form>

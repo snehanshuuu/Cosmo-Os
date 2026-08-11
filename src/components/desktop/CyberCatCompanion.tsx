@@ -85,7 +85,7 @@ export const CyberCatCompanion: React.FC = () => {
       } else if (q.includes('status') || q.includes('cpu') || q.includes('ram')) {
         botReply = "System Diagnostics: CPU Load 24% (Normal), RAM 68%, Battery 98%, Network 142.4 Mbps Download.";
       } else if (q.includes('weather') || q.includes('temp')) {
-        botReply = "Cyber City Weather: 72°F · Clear Cyber Sky ☀️ | LON: 16°C 🌧️ | TYO: 25°C ⛅";
+        botReply = "Weather details are available on the Global Node Clock card above! Cyber City Node status is 100% operational 🌐";
       } else if (q.includes('reset') || q.includes('layout')) {
         resetDashboardLayout();
         pushNotification({

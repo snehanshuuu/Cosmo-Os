@@ -5,23 +5,24 @@ export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
 export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
-  // Left Column: Terminal Stream -> System Diagnostics
+  // Left Column: Terminal Stream -> System Diagnostics -> Cyber Tasks
   { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 300 }, isVisible: true },
+  { id: 'w-tasks', type: 'tasks', position: { x: 30, y: 550 }, isVisible: true },
 
-  // Center Area: Global Node Clock (with integrated weather) & Mini Player
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 480, y: 190 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 770, y: 250 }, isVisible: true },
+  // Center Area: Global Node Clock & Mini Player
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 470, y: 50 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 740, y: 340 }, isVisible: true },
 
   // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
   { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 1220, y: 300 }, isVisible: true },
-  { id: 'w-notes', type: 'notes', position: { x: 1220, y: 560 }, isVisible: true },
-  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 730 }, isVisible: true },
+  { id: 'w-calendar', type: 'calendar', position: { x: 1220, y: 280 }, isVisible: true },
+  { id: 'w-notes', type: 'notes', position: { x: 1220, y: 520 }, isVisible: true },
+  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
 
   // Background/Hidden Widgets (Available in settings)
   { id: 'w-weather', type: 'weather', position: { x: 30, y: 650 }, isVisible: false },
-  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 770, y: 500 }, isVisible: false },
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 470, y: 340 }, isVisible: false },
 ];
 
 const loadWidgets = (): WidgetState[] => {
@@ -30,19 +31,30 @@ const loadWidgets = (): WidgetState[] => {
     if (saved) {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Filter out legacy clock and ensure Global Node Clock is present and visible
+        // Filter out legacy clock and ensure Global Node Clock & Tasks widgets are present
         const filtered = parsed.filter((w) => w.type !== 'clock');
         const nodeClock = filtered.find((w) => w.type === 'global-node-clock');
         if (!nodeClock) {
           filtered.unshift({
             id: 'w-global-node-clock',
             type: 'global-node-clock',
-            position: { x: 480, y: 190 },
+            position: { x: 470, y: 50 },
             isVisible: true,
           });
         } else {
           nodeClock.isVisible = true;
         }
+
+        const tasksWidget = filtered.find((w) => w.type === 'tasks');
+        if (!tasksWidget) {
+          filtered.push({
+            id: 'w-tasks',
+            type: 'tasks',
+            position: { x: 30, y: 550 },
+            isVisible: true,
+          });
+        }
+
         return filtered;
       }
     }

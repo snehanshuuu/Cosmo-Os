@@ -3,8 +3,16 @@ import { useMusicStore } from '../stores/musicStore';
 import * as Icons from 'lucide-react';
 
 export const MusicWidget: React.FC = () => {
-  const { playlist, currentTrackId, isPlaying, togglePlay, nextTrack } = useMusicStore();
+  const { playlist, currentTrackId, isPlaying, currentTime, setCurrentTime, togglePlay, nextTrack } = useMusicStore();
   const currentTrack = playlist.find((t) => t.id === currentTrackId) || playlist[0];
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const progressPercent = currentTrack.duration > 0 ? Math.min((currentTime / currentTrack.duration) * 100, 100) : 0;
 
   return (
     <div
@@ -35,8 +43,31 @@ export const MusicWidget: React.FC = () => {
         </div>
       </div>
 
+      {/* Seek Progress Bar */}
+      <div className="w-full flex flex-col gap-0.5 px-0.5">
+        <div
+          className="w-full h-1.5 bg-black/60 rounded-full border border-white/10 overflow-hidden cursor-pointer relative"
+          onClick={(e) => {
+            e.stopPropagation();
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const newTime = (clickX / rect.width) * currentTrack.duration;
+            setCurrentTime(newTime);
+          }}
+        >
+          <div
+            className="h-full bg-gradient-to-r from-cosmos-lime to-[#00E5FF] transition-all duration-200"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        <div className="flex justify-between text-[9px] font-mono text-cosmos-text-muted">
+          <span>{formatTime(currentTime)}</span>
+          <span>{formatTime(currentTrack.duration)}</span>
+        </div>
+      </div>
+
       {/* 8-Bar Dynamic Neon Equalizer Visualizer */}
-      <div className="flex items-end justify-center gap-1.5 h-6 w-full py-1 overflow-hidden bg-black/40 rounded border border-white/5">
+      <div className="flex items-end justify-center gap-1.5 h-5 w-full py-1 overflow-hidden bg-black/40 rounded border border-white/5">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((barNum) => (
           <div
             key={barNum}
