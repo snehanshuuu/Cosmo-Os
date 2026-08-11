@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../stores/appStore';
 import { useWindowStore } from '../../stores/windowStore';
+import { useWidgetStore } from '../../stores/widgetStore';
+import { useNotificationStore } from '../../stores/notificationStore';
 import { GlassPanel } from '../primitives/GlassPanel';
 import * as Icons from 'lucide-react';
 import { AppId } from '../../types';
@@ -10,16 +12,56 @@ interface GlobalSearchProps {
   onClose: () => void;
 }
 
+interface SearchItem {
+  id: string;
+  type: 'app' | 'action';
+  name: string;
+  description: string;
+  icon: string;
+  appId?: AppId;
+  action?: () => void;
+}
+
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) => {
   const { installedApps } = useAppStore();
   const { openApp } = useWindowStore();
+  const { resetDashboardLayout } = useWidgetStore();
+  const { push: pushNotification } = useNotificationStore();
+
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const filteredApps = installedApps.filter(
-    (app) =>
-      app.name.toLowerCase().includes(query.toLowerCase()) ||
-      app.description.toLowerCase().includes(query.toLowerCase())
+  const searchItems: SearchItem[] = [
+    ...installedApps.map((app) => ({
+      id: `app-${app.id}`,
+      type: 'app' as const,
+      name: app.name,
+      description: app.description,
+      icon: app.icon,
+      appId: app.id,
+    })),
+    {
+      id: 'action-reset-layout',
+      type: 'action' as const,
+      name: 'Reset Dashboard Layout',
+      description: 'Clear custom widget positions & restore default grid layout presets',
+      icon: 'Layout',
+      action: () => {
+        resetDashboardLayout();
+        pushNotification({
+          title: 'Dashboard Layout Reset',
+          message: 'Restored default widget grid positions.',
+          type: 'info',
+          duration: 3000,
+        });
+      },
+    },
+  ];
+
+  const filteredItems = searchItems.filter(
+    (item) =>
+      item.name.toLowerCase().includes(query.toLowerCase()) ||
+      item.description.toLowerCase().includes(query.toLowerCase())
   );
 
   useEffect(() => {
@@ -27,9 +69,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         if (isOpen) onClose();
-        else {
-          // Open search triggered globally
-        }
       }
       if (!isOpen) return;
 
@@ -37,22 +76,26 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
         onClose();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % (filteredApps.length || 1));
+        setSelectedIndex((prev) => (prev + 1) % (filteredItems.length || 1));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + (filteredApps.length || 1)) % (filteredApps.length || 1));
-      } else if (e.key === 'Enter' && filteredApps[selectedIndex]) {
+        setSelectedIndex((prev) => (prev - 1 + (filteredItems.length || 1)) % (filteredItems.length || 1));
+      } else if (e.key === 'Enter' && filteredItems[selectedIndex]) {
         e.preventDefault();
-        handleSelectApp(filteredApps[selectedIndex].id, filteredApps[selectedIndex].name, filteredApps[selectedIndex].icon);
+        handleSelectItem(filteredItems[selectedIndex]);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, query, selectedIndex, filteredApps]);
+  }, [isOpen, query, selectedIndex, filteredItems]);
 
-  const handleSelectApp = (id: AppId, name: string, icon: string) => {
-    openApp(id, name, icon);
+  const handleSelectItem = (item: SearchItem) => {
+    if (item.type === 'app' && item.appId) {
+      openApp(item.appId, item.name, item.icon);
+    } else if (item.type === 'action' && item.action) {
+      item.action();
+    }
     onClose();
     setQuery('');
   };
@@ -68,7 +111,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
           <input
             type="text"
             autoFocus
-            placeholder="Search applications, settings, files... (Cmd+K)"
+            placeholder="Search apps, settings, commands... (Cmd + K)"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -83,15 +126,16 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
 
         {/* Results List */}
         <div className="flex flex-col gap-1 max-h-80 overflow-y-auto">
-          {filteredApps.length > 0 ? (
-            filteredApps.map((app, idx) => {
-              const AppIconComp = (Icons as unknown as Record<string, React.FC<{ className?: string }>>)[app.icon] || Icons.AppWindow;
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item, idx) => {
+              const ItemIconComp =
+                (Icons as unknown as Record<string, React.FC<{ className?: string }>>)[item.icon] || Icons.AppWindow;
               const isSelected = idx === selectedIndex;
 
               return (
                 <div
-                  key={app.id}
-                  onClick={() => handleSelectApp(app.id, app.name, app.icon)}
+                  key={item.id}
+                  onClick={() => handleSelectItem(item)}
                   className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-all ${
                     isSelected
                       ? 'bg-cosmos-lime/20 border border-cosmos-lime/40 text-white'
@@ -100,22 +144,22 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-md bg-black/40 text-cosmos-lime-bright">
-                      <AppIconComp className="w-5 h-5" />
+                      <ItemIconComp className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="font-mono text-xs font-bold text-white block">{app.name}</span>
-                      <span className="text-[11px] text-cosmos-text-muted">{app.description}</span>
+                      <span className="font-mono text-xs font-bold text-white block">{item.name}</span>
+                      <span className="text-[11px] text-cosmos-text-muted">{item.description}</span>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono text-cosmos-lime-bright uppercase bg-cosmos-lime/10 px-2 py-0.5 rounded">
-                    Launch
+                    {item.type === 'action' ? 'Execute' : 'Launch'}
                   </span>
                 </div>
               );
             })
           ) : (
             <div className="p-6 text-center text-xs font-mono text-cosmos-text-muted">
-              No matching applications or settings found.
+              No matching applications or system commands found.
             </div>
           )}
         </div>

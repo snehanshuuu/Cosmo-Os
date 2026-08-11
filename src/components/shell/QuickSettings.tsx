@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { GlassPanel } from '../primitives/GlassPanel';
 import { useSettingsStore } from '../../stores/settingsStore';
+import { useWidgetStore } from '../../stores/widgetStore';
+import { useNotificationStore } from '../../stores/notificationStore';
 import * as Icons from 'lucide-react';
 
 interface QuickSettingsProps {
@@ -9,14 +11,28 @@ interface QuickSettingsProps {
 
 export const QuickSettings: React.FC<QuickSettingsProps> = ({ onClose }) => {
   const { reducedMotion, toggleReducedMotion } = useSettingsStore();
+  const { resetDashboardLayout } = useWidgetStore();
+  const { push: pushNotification } = useNotificationStore();
+
   const [wifi, setWifi] = useState(true);
   const [bluetooth, setBluetooth] = useState(true);
   const [dnd, setDnd] = useState(false);
 
+  const handleResetLayout = () => {
+    resetDashboardLayout();
+    pushNotification({
+      title: 'Dashboard Layout Reset',
+      message: 'Restored default widget grid positions.',
+      type: 'info',
+      duration: 3000,
+    });
+    onClose();
+  };
+
   return (
     <GlassPanel
       variant="modal"
-      className="absolute top-10 right-4 z-50 p-4 w-80 flex flex-col gap-4 shadow-glass"
+      className="absolute top-10 right-4 z-50 p-4 w-80 flex flex-col gap-4 shadow-glass select-none"
     >
       <div className="flex justify-between items-center border-b border-white/10 pb-2">
         <span className="font-mono text-xs font-bold text-white uppercase">Control Center</span>
@@ -94,6 +110,17 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({ onClose }) => {
             className="w-full accent-cosmos-lime cursor-pointer"
           />
         </div>
+      </div>
+
+      {/* Subtle Reset Layout Button */}
+      <div className="border-t border-white/10 pt-2">
+        <button
+          onClick={handleResetLayout}
+          className="w-full py-2 rounded bg-white/5 border border-white/10 hover:bg-cosmos-lime/20 hover:text-cosmos-lime-bright hover:border-cosmos-lime/40 text-xs font-mono text-cosmos-text-secondary transition-all flex items-center justify-center gap-2"
+        >
+          <Icons.RefreshCw className="w-3.5 h-3.5" />
+          <span>Reset Layout</span>
+        </button>
       </div>
     </GlassPanel>
   );

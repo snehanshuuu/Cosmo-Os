@@ -61,6 +61,8 @@ export const SettingsApp: React.FC = () => {
   ];
 
   const availableWidgets: { type: WidgetType; name: string; icon: string; desc: string }[] = [
+    { type: 'theme-display-control', name: 'Display & Theme Control', icon: 'Palette', desc: 'Visual FX toggles, wallpaper presets, & color scheme controls' },
+    { type: 'network-telemetry', name: 'Network Telemetry', icon: 'Wifi', desc: 'Live UP/DOWN speed metrics & Sparkline bandwidth graph' },
     { type: 'global-node-clock', name: 'Global Node Clock', icon: 'Globe', desc: 'World vector map with tech hub pulse dots & multi-timezone readout' },
     { type: 'terminal-stream', name: 'Terminal Stream Widget', icon: 'Terminal', desc: 'Live scrolling system logs & interactive prompt' },
     { type: 'calendar', name: 'Calendar Widget', icon: 'Calendar', desc: 'Mini month calendar view highlighting today' },
@@ -221,7 +223,7 @@ export const SettingsApp: React.FC = () => {
               <div>
                 <h2 className="text-xl font-display font-bold text-white mb-1">Desktop Widgets</h2>
                 <p className="text-xs text-cosmos-text-secondary font-mono">
-                  Toggle visibility for desktop widgets (Global Node Clock, Terminal Stream, Calendar, Weather, etc.)
+                  Toggle visibility for desktop widgets (Display & Theme Control, Network Telemetry, Global Node Clock, etc.)
                 </p>
               </div>
               <button

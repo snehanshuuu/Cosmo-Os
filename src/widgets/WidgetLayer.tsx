@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWidgetStore } from '../stores/widgetStore';
 import { WidgetWrapper } from './WidgetWrapper';
 import { ClockWidget } from './ClockWidget';
@@ -10,9 +10,15 @@ import { QuickActionsWidget } from './QuickActionsWidget';
 import { SystemStatsWidget } from './SystemStatsWidget';
 import { TerminalStreamWidget } from './TerminalStreamWidget';
 import { GlobalNodeClockWidget } from './GlobalNodeClockWidget';
+import { NetworkTelemetryWidget } from './NetworkTelemetryWidget';
+import { DisplayThemeWidget } from './DisplayThemeWidget';
 
 export const WidgetLayer: React.FC = () => {
-  const { widgets, updatePosition } = useWidgetStore();
+  const { widgets, updatePosition, hydrateWidgetLayout } = useWidgetStore();
+
+  useEffect(() => {
+    hydrateWidgetLayout();
+  }, []);
 
   const renderWidgetContent = (type: string) => {
     switch (type) {
@@ -34,6 +40,10 @@ export const WidgetLayer: React.FC = () => {
         return <TerminalStreamWidget />;
       case 'global-node-clock':
         return <GlobalNodeClockWidget />;
+      case 'network-telemetry':
+        return <NetworkTelemetryWidget />;
+      case 'theme-display-control':
+        return <DisplayThemeWidget />;
       default:
         return null;
     }

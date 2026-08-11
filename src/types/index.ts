@@ -87,7 +87,9 @@ export type WidgetType =
   | 'music' 
   | 'quick-actions'
   | 'terminal-stream'
-  | 'global-node-clock';
+  | 'global-node-clock'
+  | 'network-telemetry'
+  | 'theme-display-control';
 
 export interface WidgetState {
   id: string;

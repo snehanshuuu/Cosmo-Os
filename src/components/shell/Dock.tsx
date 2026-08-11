@@ -12,9 +12,14 @@ export const Dock: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 transition-transform duration-300 ${
-        dockAutohide ? 'translate-y-20 hover:translate-y-0' : 'translate-y-0'
-      }`}
+      style={{
+        position: 'fixed',
+        bottom: '20px',
+        left: '50%',
+        transform: dockAutohide ? 'translateX(-50%) translateY(80px)' : 'translateX(-50%)',
+        zIndex: 50,
+      }}
+      className="transition-transform duration-300 pointer-events-auto"
     >
       <GlassPanel
         variant="dock"

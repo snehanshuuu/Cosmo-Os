@@ -13,7 +13,7 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
   onOpenSearch,
 }) => {
   return (
-    <div className="flex items-center gap-3 font-mono text-xs text-cosmos-text-primary">
+    <div className="flex items-center gap-3 font-mono text-xs text-cosmos-text-primary select-none">
       {/* Global Search Shortcut Button with Spaced Styling */}
       <button
         onClick={onOpenSearch}
@@ -45,13 +45,13 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
         <Icons.SlidersHorizontal className="w-3.5 h-3.5" />
       </button>
 
-      {/* User Profile / Status Trigger Button (Replacing redundant digital clock) */}
+      {/* Dark Translucent Glass Admin Profile Badge with Subtle Green Border */}
       <button
         onClick={onToggleCalendar}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-cosmos-lime/10 border border-cosmos-lime/30 text-cosmos-lime-bright hover:bg-cosmos-lime hover:text-black transition-all group"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-cosmos-lime/40 text-cosmos-lime-bright hover:border-cosmos-lime hover:bg-cosmos-lime/15 transition-all shadow-sm group"
         title="User Profile & Calendar (Click to toggle)"
       >
-        <div className="w-4 h-4 rounded-full bg-cosmos-lime text-black flex items-center justify-center font-bold text-[9px] shadow-lime-glow group-hover:bg-black group-hover:text-cosmos-lime">
+        <div className="w-4 h-4 rounded-full bg-cosmos-lime/20 border border-cosmos-lime/60 text-cosmos-lime-bright flex items-center justify-center font-bold text-[9px] shadow-sm">
           <Icons.User className="w-2.5 h-2.5 stroke-[2.5]" />
         </div>
         <span className="text-[10px] font-mono font-bold tracking-tight">Admin</span>

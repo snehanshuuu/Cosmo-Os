@@ -1,23 +1,26 @@
 import { create } from 'zustand';
 import { WidgetState, WidgetType, WindowPosition } from '../types';
 
-const LOCAL_STORAGE_KEY = 'cosmos_os_widgets';
+export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
+export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
   { id: 'w-clock', type: 'clock', position: { x: 30, y: 50 }, isVisible: true },
   { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 30, y: 220 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 460 }, isVisible: true },
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 675 }, isVisible: true },
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 30, y: 460 }, isVisible: true },
+  { id: 'w-[#1]', type: 'calendar', position: { x: 30, y: 680 }, isVisible: true },
+  { id: 'w-weather', type: 'weather', position: { x: 30, y: 885 }, isVisible: true },
   { id: 'w-notes', type: 'notes', position: { x: 1220, y: 50 }, isVisible: true },
-  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 1220, y: 200 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 1220, y: 395 }, isVisible: true },
-  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 560 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 670 }, isVisible: true },
+  { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 200 }, isVisible: true },
+  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 1220, y: 360 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 1220, y: 555 }, isVisible: true },
+  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 830 }, isVisible: true },
 ];
 
 const loadWidgets = (): WidgetState[] => {
   try {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -30,14 +33,21 @@ const loadWidgets = (): WidgetState[] => {
 
 interface WidgetStore {
   widgets: WidgetState[];
+  hydrateWidgetLayout: () => void;
   updatePosition: (id: string, pos: WindowPosition) => void;
   toggleWidgetVisibility: (id: string) => void;
   toggleWidgetType: (type: WidgetType) => void;
   resetDefaultWidgets: () => void;
+  resetDashboardLayout: () => void;
 }
 
 export const useWidgetStore = create<WidgetStore>((set, get) => ({
   widgets: loadWidgets(),
+
+  hydrateWidgetLayout: () => {
+    const loaded = loadWidgets();
+    set({ widgets: loaded });
+  },
 
   updatePosition: (id: string, position: WindowPosition) => {
     const updated = get().widgets.map((w) => (w.id === id ? { ...w, position } : w));
@@ -76,11 +86,24 @@ export const useWidgetStore = create<WidgetStore>((set, get) => ({
     set({ widgets: DEFAULT_WIDGETS });
     saveWidgets(DEFAULT_WIDGETS);
   },
+
+  resetDashboardLayout: () => {
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } catch (e) {
+      console.warn('Failed to clear layout from localStorage', e);
+    }
+    set({ widgets: DEFAULT_WIDGETS });
+    saveWidgets(DEFAULT_WIDGETS);
+  },
 }));
 
 function saveWidgets(widgets: WidgetState[]) {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(widgets));
+    const serialized = JSON.stringify(widgets);
+    localStorage.setItem(LOCAL_STORAGE_KEY, serialized);
+    localStorage.setItem(LEGACY_STORAGE_KEY, serialized);
   } catch (e) {
     console.warn('Failed to save widgets to localStorage', e);
   }
