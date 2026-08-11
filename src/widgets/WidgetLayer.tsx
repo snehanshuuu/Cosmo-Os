@@ -9,9 +9,9 @@ import { MusicWidget } from './MusicWidget';
 import { QuickActionsWidget } from './QuickActionsWidget';
 import { SystemStatsWidget } from './SystemStatsWidget';
 import { TerminalStreamWidget } from './TerminalStreamWidget';
-import { GlobalNodeClockWidget } from './GlobalNodeClockWidget';
 import { NetworkTelemetryWidget } from './NetworkTelemetryWidget';
 import { DisplayThemeWidget } from './DisplayThemeWidget';
+import { CyberCat } from './CyberCat';
 
 export const WidgetLayer: React.FC = () => {
   const { widgets, updatePosition, hydrateWidgetLayout } = useWidgetStore();
@@ -38,8 +38,6 @@ export const WidgetLayer: React.FC = () => {
         return <SystemStatsWidget />;
       case 'terminal-stream':
         return <TerminalStreamWidget />;
-      case 'global-node-clock':
-        return <GlobalNodeClockWidget />;
       case 'network-telemetry':
         return <NetworkTelemetryWidget />;
       case 'theme-display-control':
@@ -51,8 +49,11 @@ export const WidgetLayer: React.FC = () => {
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+      {/* CyberCat pixel cat sprite anchored at lower-left desktop corner (bottom: 80px, left: 40px) */}
+      <CyberCat />
+
       {widgets
-        .filter((w) => w.isVisible)
+        .filter((w) => w.isVisible && w.type !== 'global-node-clock')
         .map((w) => (
           <WidgetWrapper
             key={w.id}
