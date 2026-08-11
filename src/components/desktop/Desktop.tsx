@@ -13,6 +13,7 @@ import { ContextMenu } from '../shell/ContextMenu';
 import { WidgetLayer } from '../../widgets/WidgetLayer';
 import { CyberCatCompanion } from './CyberCatCompanion';
 import { BackgroundCanvas } from './BackgroundCanvas';
+import { GlobalAudioPlayer } from '../shell/GlobalAudioPlayer';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useWindowStore } from '../../stores/windowStore';
 
@@ -99,6 +100,9 @@ export const Desktop: React.FC = () => {
       onContextMenu={handleContextMenu}
       className="relative w-screen h-screen overflow-hidden select-none bg-cosmos-bg text-cosmos-text-primary"
     >
+      {/* Background Audio Player Engine */}
+      <GlobalAudioPlayer />
+
       {/* Dynamic 3D Fiber Background Canvas Layer */}
       <BackgroundCanvas />
 

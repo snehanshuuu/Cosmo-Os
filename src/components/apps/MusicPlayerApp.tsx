@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useMusicStore } from '../../stores/musicStore';
 import * as Icons from 'lucide-react';
 
@@ -22,65 +22,11 @@ export const MusicPlayerApp: React.FC = () => {
     addTracks,
   } = useMusicStore();
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const currentTrack = playlist.find((t) => t.id === currentTrackId) || playlist[0];
-
-  useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-    }
-    const audio = audioRef.current;
-    audio.src = currentTrack.src;
-    audio.volume = volume;
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleEnded = () => {
-      if (isRepeat) {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      } else {
-        nextTrack();
-      }
-    };
-
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-
-    if (isPlaying) {
-      audio.play().catch(() => {});
-    } else {
-      audio.pause();
-    }
-
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [currentTrackId]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) audioRef.current.play().catch(() => {});
-      else audioRef.current.pause();
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
     setCurrentTime(time);
   };
 
