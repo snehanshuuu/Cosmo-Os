@@ -4,18 +4,24 @@ import { WidgetState, WidgetType, WindowPosition } from '../types';
 export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
 export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
+const getCenteredX = () => {
+  if (typeof window !== 'undefined' && window.innerWidth) {
+    return Math.max(50, Math.floor((window.innerWidth - 260) / 2));
+  }
+  return 580;
+};
+
 const DEFAULT_WIDGETS: WidgetState[] = [
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 30, y: 290 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 510 }, isVisible: true },
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 715 }, isVisible: true },
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: getCenteredX(), y: 50 }, isVisible: true },
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 30, y: 50 }, isVisible: true },
+  { id: 'w-calendar', type: 'calendar', position: { x: 30, y: 290 }, isVisible: true },
+  { id: 'w-weather', type: 'weather', position: { x: 30, y: 500 }, isVisible: true },
   { id: 'w-notes', type: 'notes', position: { x: 1220, y: 50 }, isVisible: true },
   { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 200 }, isVisible: true },
   { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 1220, y: 360 }, isVisible: true },
   { id: 'w-music', type: 'music', position: { x: 1220, y: 555 }, isVisible: true },
   { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
   { id: 'w-system-stats', type: 'system-stats', position: { x: 1220, y: 830 }, isVisible: true },
-  { id: 'w-clock', type: 'clock', position: { x: 30, y: 920 }, isVisible: false },
 ];
 
 const loadWidgets = (): WidgetState[] => {
@@ -24,15 +30,18 @@ const loadWidgets = (): WidgetState[] => {
     if (saved) {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure Global Node Clock is active as the default primary clock
-        const hasGlobalClock = parsed.some((w) => w.type === 'global-node-clock');
-        if (!hasGlobalClock) {
-          return [
-            { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 30, y: 50 }, isVisible: true },
-            ...parsed,
-          ];
+        // Remove legacy standard digital clock if present
+        const filtered = parsed.filter((w) => w.type !== 'clock');
+        const globalClockIdx = filtered.findIndex((w) => w.type === 'global-node-clock');
+        if (globalClockIdx === -1) {
+          filtered.unshift({
+            id: 'w-global-node-clock',
+            type: 'global-node-clock',
+            position: { x: getCenteredX(), y: 50 },
+            isVisible: true,
+          });
         }
-        return parsed;
+        return filtered;
       }
     }
   } catch (e) {

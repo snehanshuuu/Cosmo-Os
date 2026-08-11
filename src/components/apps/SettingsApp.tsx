@@ -61,15 +61,14 @@ export const SettingsApp: React.FC = () => {
   ];
 
   const availableWidgets: { type: WidgetType; name: string; icon: string; desc: string }[] = [
+    { type: 'global-node-clock', name: 'Global Node Clock (Default)', icon: 'Globe', desc: 'World vector map with tech hub pulse dots & multi-timezone readout' },
     { type: 'theme-display-control', name: 'Display & Theme Control', icon: 'Palette', desc: 'Visual FX toggles, wallpaper presets, & color scheme controls' },
     { type: 'network-telemetry', name: 'Network Telemetry', icon: 'Wifi', desc: 'Live UP/DOWN speed metrics & Sparkline bandwidth graph' },
-    { type: 'global-node-clock', name: 'Global Node Clock', icon: 'Globe', desc: 'World vector map with tech hub pulse dots & multi-timezone readout' },
     { type: 'terminal-stream', name: 'Terminal Stream Widget', icon: 'Terminal', desc: 'Live scrolling system logs & interactive prompt' },
     { type: 'calendar', name: 'Calendar Widget', icon: 'Calendar', desc: 'Mini month calendar view highlighting today' },
     { type: 'weather', name: 'Weather Widget', icon: 'Sun', desc: 'Live temperature, condition, and location' },
     { type: 'notes', name: 'Notes Scratchpad', icon: 'FileText', desc: 'Quick note viewer on desktop' },
     { type: 'music', name: 'Music Player Widget', icon: 'Music', desc: 'Mini audio playback controls' },
-    { type: 'clock', name: 'Digital Clock', icon: 'Clock', desc: 'Live time with 12/24h toggle' },
     { type: 'quick-actions', name: 'Quick Actions', icon: 'Sliders', desc: 'Wi-Fi, Bluetooth, DND toggles' },
     { type: 'system-stats', name: 'System Diagnostics', icon: 'Zap', desc: 'CPU, RAM, and Storage gauges' },
   ];
@@ -223,7 +222,7 @@ export const SettingsApp: React.FC = () => {
               <div>
                 <h2 className="text-xl font-display font-bold text-white mb-1">Desktop Widgets</h2>
                 <p className="text-xs text-cosmos-text-secondary font-mono">
-                  Toggle visibility for desktop widgets (Display & Theme Control, Network Telemetry, Global Node Clock, etc.)
+                  Toggle visibility for desktop widgets (Global Node Clock, Display & Theme Control, Network Telemetry, etc.)
                 </p>
               </div>
               <button
