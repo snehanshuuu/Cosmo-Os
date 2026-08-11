@@ -11,6 +11,7 @@ import { CalendarPopup } from '../shell/CalendarPopup';
 import { QuickSettings } from '../shell/QuickSettings';
 import { ContextMenu } from '../shell/ContextMenu';
 import { WidgetLayer } from '../../widgets/WidgetLayer';
+import { CyberCatCompanion } from './CyberCatCompanion';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useWindowStore } from '../../stores/windowStore';
 
@@ -102,6 +103,9 @@ export const Desktop: React.FC = () => {
 
       {/* Interactive Desktop Widgets Layer */}
       <WidgetLayer />
+
+      {/* Clickable Bottom-Left Cyber Cat Companion */}
+      <CyberCatCompanion />
 
       {/* Top System Status Bar */}
       <TopBar

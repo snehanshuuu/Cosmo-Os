@@ -56,6 +56,7 @@ declare module 'lucide-react' {
   export const User: React.FC<IconProps>;
   export const GripVertical: React.FC<IconProps>;
   export const GripHorizontal: React.FC<IconProps>;
+  export const Sparkles: React.FC<IconProps>;
 
   const icons: Record<string, React.FC<IconProps>>;
   export default icons;
