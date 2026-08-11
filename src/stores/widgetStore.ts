@@ -5,12 +5,11 @@ export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
 export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
-  // Left Column: Weather -> Terminal Stream -> System Diagnostics
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 260 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 560 }, isVisible: true },
+  // Left Column: Terminal Stream -> System Diagnostics
+  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
 
-  // Center Area: Global Node Clock & Mini Player
+  // Center Area: Global Node Clock (with integrated weather) & Mini Player
   { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 480, y: 190 }, isVisible: true },
   { id: 'w-music', type: 'music', position: { x: 770, y: 250 }, isVisible: true },
 
@@ -20,7 +19,8 @@ const DEFAULT_WIDGETS: WidgetState[] = [
   { id: 'w-notes', type: 'notes', position: { x: 1220, y: 560 }, isVisible: true },
   { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 730 }, isVisible: true },
 
-  // Display & Theme Control (Available in settings)
+  // Background/Hidden Widgets (Available in settings)
+  { id: 'w-weather', type: 'weather', position: { x: 30, y: 650 }, isVisible: false },
   { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 770, y: 500 }, isVisible: false },
 ];
 
@@ -31,8 +31,7 @@ const loadWidgets = (): WidgetState[] => {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
         // Remove legacy standard digital clock if present
-        const filtered = parsed.filter((w) => w.type !== 'clock');
-        return filtered;
+        return parsed.filter((w) => w.type !== 'clock');
       }
     }
   } catch (e) {
