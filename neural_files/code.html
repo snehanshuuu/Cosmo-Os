@@ -1,0 +1,309 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>COSMO OS - Neural Files</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Hanken+Grotesk:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-background": "#e3e2e3",
+                        "surface-container-low": "#1b1c1d",
+                        "primary-fixed-dim": "#aad622",
+                        "surface-bright": "#39393a",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "on-primary-fixed-variant": "#3b4d00",
+                        "on-surface": "#e3e2e3",
+                        "on-tertiary-container": "#626566",
+                        "surface-tint": "#aad622",
+                        "primary": "#ffffff",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#8e937b",
+                        "on-primary-fixed": "#161f00",
+                        "on-tertiary-fixed-variant": "#444748",
+                        "on-tertiary": "#2e3132",
+                        "on-secondary-fixed-variant": "#444748",
+                        "surface-container-high": "#292a2b",
+                        "on-surface-variant": "#c4c9af",
+                        "inverse-surface": "#e3e2e3",
+                        "secondary-container": "#444748",
+                        "on-secondary-fixed": "#191c1d",
+                        "secondary": "#c5c7c8",
+                        "surface-variant": "#343536",
+                        "inverse-primary": "#4f6600",
+                        "secondary-fixed": "#e1e3e4",
+                        "tertiary": "#ffffff",
+                        "on-primary": "#283500",
+                        "tertiary-container": "#e1e3e4",
+                        "surface-container-highest": "#343536",
+                        "on-primary-container": "#546d00",
+                        "surface": "#121314",
+                        "on-tertiary-fixed": "#191c1d",
+                        "on-secondary-container": "#b3b5b6",
+                        "outline-variant": "#444935",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "primary-fixed": "#c6f341",
+                        "on-secondary": "#2e3132",
+                        "primary-container": "#c6f341",
+                        "surface-container": "#1f2021",
+                        "surface-dim": "#121314",
+                        "error": "#ffb4ab",
+                        "background": "#121314",
+                        "inverse-on-surface": "#303031",
+                        "tertiary-fixed": "#e1e3e4",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0d0e0f"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    fontFamily: {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    fontSize: {
+                        "display-lg": ["72px", { lineHeight: "80px", letterSpacing: "-0.04em", fontWeight: "800" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "title-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "headline-lg-mobile": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.1em", fontWeight: "500" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .inner-glow-top {
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(170, 214, 34, 0.3);
+        }
+        .neon-glow-text {
+            text-shadow: 0 0 10px rgba(170, 214, 34, 0.5);
+        }
+        .dotted-line {
+            background-image: linear-gradient(to right, #444935 50%, transparent 50%);
+            background-position: bottom;
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121314; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #343536; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444748; 
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary-fixed-dim selection:text-on-primary">
+<!-- TopAppBar (Web & Mobile Hybrid) -->
+<header class="bg-surface/60 dark:bg-surface/60 backdrop-blur-xl border-b border-white/10 inner-glow-top shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 z-50 sticky top-0">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: &quot;FILL&quot; 1;">autorenew</span>
+<span class="text-title-md font-display-lg font-extrabold tracking-tighter text-on-surface dark:text-on-surface">COSMO- OS</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg text-label-caps font-label-caps" href="#">Dashboard</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg text-label-caps font-label-caps" href="#">Memory</a>
+<a class="text-primary dark:text-primary-fixed-dim text-label-caps font-label-caps px-3 py-2 rounded-lg bg-white/5 neon-glow" href="#">Files</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg text-label-caps font-label-caps" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant hover:border-primary-fixed-dim transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary-fixed-dim">search</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-white/10 overflow-hidden flex items-center justify-center">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-Bj8LeiUppIcAo7mLAy8qnOwxDR6qOMwsILIMz3hXHAUyc9pVG5J0fS6pMPEKWxSx_xKxbOSRPSkO5vDUqUoRx4xcONom0zsq1Fcn7pWX2TPJR3QkS4wVLpmRJi3pD-ma9Uy4DwYW8Lh0ouyyTk4YOzHzFq6JvvVJvmZoGz5KQhFGLfc0b9MZrhI2k7awLJDvtLW33VaKJD-4g4HGwsyGJ5SAO5m7MmBsU1XAAEXXcREMhW_i-GVA">
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col w-full max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop gap-gutter">
+<!-- Header & Search -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4">
+<div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-surface mb-2">Neural Files</h1>
+<p class="text-body-md font-body-md text-on-surface-variant">Manage and synchronize your data nodes.</p>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full md:w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-fixed-dim transition-colors z-10">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-3 pl-12 pr-4 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary-fixed-dim focus:ring-1 focus:ring-primary-fixed-dim/50 transition-all placeholder:text-on-surface-variant/50 relative z-0" placeholder="Query data nodes..." type="text">
+<!-- Fake Cursor Effect -->
+<div class="absolute right-4 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-primary-fixed-dim animate-pulse hidden group-focus-within:block z-10"></div>
+</div>
+</div>
+<!-- Geometric Folders (Bento Grid Style) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<!-- Folder 1 -->
+<div class="bg-surface-container-low/80 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-fixed-dim/50 hover:bg-surface-container/80 transition-all cursor-pointer group inner-glow-top relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed-dim/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative">
+<span class="material-symbols-outlined text-3xl text-secondary group-hover:text-primary-fixed-dim group-hover:neon-glow-text transition-colors">hexagon</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface group-hover:text-primary-fixed-dim transition-colors">Core Systems</span>
+</div>
+<!-- Folder 2 -->
+<div class="bg-surface-container-low/80 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-fixed-dim/50 hover:bg-surface-container/80 transition-all cursor-pointer group inner-glow-top relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed-dim/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative">
+<span class="material-symbols-outlined text-3xl text-secondary group-hover:text-primary-fixed-dim group-hover:neon-glow-text transition-colors">polyline</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface group-hover:text-primary-fixed-dim transition-colors">Neural Nets</span>
+</div>
+<!-- Folder 3 -->
+<div class="bg-surface-container-low/80 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-fixed-dim/50 hover:bg-surface-container/80 transition-all cursor-pointer group inner-glow-top relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed-dim/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative">
+<span class="material-symbols-outlined text-3xl text-secondary group-hover:text-primary-fixed-dim group-hover:neon-glow-text transition-colors">token</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface group-hover:text-primary-fixed-dim transition-colors">Archives</span>
+</div>
+<!-- Folder 4 -->
+<div class="bg-surface-container-low/80 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-fixed-dim/50 hover:bg-surface-container/80 transition-all cursor-pointer group inner-glow-top relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed-dim/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative">
+<span class="material-symbols-outlined text-3xl text-secondary group-hover:text-primary-fixed-dim group-hover:neon-glow-text transition-colors">view_in_ar</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface group-hover:text-primary-fixed-dim transition-colors">Render Cache</span>
+</div>
+</section>
+<!-- Data Nodes List -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-center mb-2 pb-2 dotted-line">
+<h2 class="text-title-md font-title-md text-on-surface">Recent Data Nodes</h2>
+<button class="text-label-caps font-label-caps text-primary-fixed-dim hover:text-white transition-colors flex items-center gap-1">
+                    View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- List Header (Desktop) -->
+<div class="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-label-caps font-label-caps text-on-surface-variant">
+<div class="col-span-5">Node Name</div>
+<div class="col-span-2 text-center">Sync Status</div>
+<div class="col-span-3 text-center">Encryption Level</div>
+<div class="col-span-2 text-right">Size</div>
+</div>
+<!-- Node Item 1 -->
+<div class="bg-surface-container-low/50 backdrop-blur-md border border-white/5 rounded-lg p-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-surface-container/80 hover:border-white/10 transition-all group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-fixed-dim transition-colors" style="font-variation-settings: &quot;FILL&quot; 1;">description</span>
+<span class="text-body-md font-body-md text-on-surface truncate">quantum_algorithm_v2.sys</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex items-center md:justify-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim neon-glow"></span>
+<span class="text-label-caps font-label-caps text-primary-fixed-dim">Synced</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex items-center md:justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Level 4 (AES-256)</span>
+</div>
+<div class="col-span-1 md:col-span-2 text-left md:text-right text-label-caps font-label-caps text-on-surface-variant">
+                    14.2 MB
+                </div>
+</div>
+<!-- Node Item 2 -->
+<div class="bg-surface-container-low/50 backdrop-blur-md border border-white/5 rounded-lg p-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-surface-container/80 hover:border-white/10 transition-all group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-fixed-dim transition-colors" style="font-variation-settings: &quot;FILL&quot; 1;">image</span>
+<span class="text-body-md font-body-md text-on-surface truncate">manifold_render_09.png</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex items-center md:justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary animate-spin">sync</span>
+<span class="text-label-caps font-label-caps text-secondary">Syncing...</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex items-center md:justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock_open</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Level 1 (Public)</span>
+</div>
+<div class="col-span-1 md:col-span-2 text-left md:text-right text-label-caps font-label-caps text-on-surface-variant">
+                    2.1 GB
+                </div>
+</div>
+<!-- Node Item 3 -->
+<div class="bg-surface-container-low/50 backdrop-blur-md border border-white/5 rounded-lg p-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-surface-container/80 hover:border-white/10 transition-all group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-fixed-dim transition-colors" style="font-variation-settings: &quot;FILL&quot; 1;">database</span>
+<span class="text-body-md font-body-md text-on-surface truncate">user_telemetry_dump.db</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex items-center md:justify-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim neon-glow"></span>
+<span class="text-label-caps font-label-caps text-primary-fixed-dim">Synced</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex items-center md:justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Level 5 (Quantum)</span>
+</div>
+<div class="col-span-1 md:col-span-2 text-left md:text-right text-label-caps font-label-caps text-on-surface-variant">
+                    845 MB
+                </div>
+</div>
+<!-- Node Item 4 -->
+<div class="bg-surface-container-low/50 backdrop-blur-md border border-white/5 rounded-lg p-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-surface-container/80 hover:border-white/10 transition-all group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-fixed-dim transition-colors" style="font-variation-settings: &quot;FILL&quot; 1;">terminal</span>
+<span class="text-body-md font-body-md text-on-surface truncate">init_sequence.sh</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex items-center md:justify-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error neon-glow"></span>
+<span class="text-label-caps font-label-caps text-error">Failed</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex items-center md:justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Level 2 (Internal)</span>
+</div>
+<div class="col-span-1 md:col-span-2 text-left md:text-right text-label-caps font-label-caps text-on-surface-variant">
+                    12 KB
+                </div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface-container-low/80 dark:bg-surface-container-low/80 backdrop-blur-2xl border-t border-white/5 shadow-[0_-10px_30px_rgba(170,214,34,0.1)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">memory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary-fixed-dim bg-primary/10 rounded-full p-3 shadow-[0_0_15px_rgba(170,214,34,0.4)] scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">settings_input_component</span>
+</a>
+</nav>
+
+
+</body></html>

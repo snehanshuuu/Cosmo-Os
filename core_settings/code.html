@@ -1,0 +1,257 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>COSMO OS - Core Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Hanken+Grotesk:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-background": "#e3e2e3",
+                        "surface-container-low": "#1b1c1d",
+                        "primary-fixed-dim": "#aad622",
+                        "surface-bright": "#39393a",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "on-primary-fixed-variant": "#3b4d00",
+                        "on-surface": "#e3e2e3",
+                        "on-tertiary-container": "#626566",
+                        "surface-tint": "#aad622",
+                        "primary": "#ffffff",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#8e937b",
+                        "on-primary-fixed": "#161f00",
+                        "on-tertiary-fixed-variant": "#444748",
+                        "on-tertiary": "#2e3132",
+                        "on-secondary-fixed-variant": "#444748",
+                        "surface-container-high": "#292a2b",
+                        "on-surface-variant": "#c4c9af",
+                        "inverse-surface": "#e3e2e3",
+                        "secondary-container": "#444748",
+                        "on-secondary-fixed": "#191c1d",
+                        "secondary": "#c5c7c8",
+                        "surface-variant": "#343536",
+                        "inverse-primary": "#4f6600",
+                        "secondary-fixed": "#e1e3e4",
+                        "tertiary": "#ffffff",
+                        "on-primary": "#283500",
+                        "tertiary-container": "#e1e3e4",
+                        "surface-container-highest": "#343536",
+                        "on-primary-container": "#546d00",
+                        "surface": "#121314",
+                        "on-tertiary-fixed": "#191c1d",
+                        "on-secondary-container": "#b3b5b6",
+                        "outline-variant": "#444935",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "primary-fixed": "#c6f341",
+                        "on-secondary": "#2e3132",
+                        "primary-container": "#c6f341",
+                        "surface-container": "#1f2021",
+                        "surface-dim": "#121314",
+                        "error": "#ffb4ab",
+                        "background": "#121314",
+                        "inverse-on-surface": "#303031",
+                        "tertiary-fixed": "#e1e3e4",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0d0e0f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    fontFamily: {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    fontSize: {
+                        "display-lg": ["72px", { lineHeight: "80px", letterSpacing: "-0.04em", fontWeight: "800" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "title-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "headline-lg-mobile": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.1em", fontWeight: "500" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .inner-glow-top { box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2); }
+        .glow-active { box-shadow: 0 0 20px rgba(209, 255, 77, 0.3); }
+        .dashed-divider { border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Ambient Background -->
+<div class="fixed inset-0 pointer-events-none z-[-1] opacity-40">
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-surface-container-high/40 via-background to-background"></div>
+</div>
+<!-- TopAppBar Component (from JSON) -->
+<header class="fixed docked full-width top-0 border-b border-white/10 inner-glow-top shadow-sm bg-surface/60 dark:bg-surface/60 backdrop-blur-xl flex justify-between items-center w-full px-margin-mobile py-4 z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim text-3xl">autorenew</span>
+<span class="text-title-md font-display-lg font-extrabold tracking-tighter text-on-surface dark:text-on-surface">COSMO- OS</span>
+</div>
+<!-- Hidden on Mobile Nav -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-label-caps font-label-caps text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg" href="#">DASHBOARD</a>
+<a class="text-label-caps font-label-caps text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg" href="#">MEMORY</a>
+<a class="text-label-caps font-label-caps text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors px-3 py-2 rounded-lg" href="#">FILES</a>
+<a class="text-label-caps font-label-caps text-primary dark:text-primary-fixed-dim hover:bg-white/5 transition-colors px-3 py-2 rounded-lg scale-95 duration-150 relative" href="#">
+                SETTINGS
+                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-fixed-dim rounded-full glow-active"></div>
+</a>
+</nav>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-gutter">
+<!-- Header -->
+<div class="flex flex-col gap-4 mb-8">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-surface">Core Settings</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Manage detailed system configurations and security protocols for COSMO OS.</p>
+</div>
+<!-- Settings Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Aesthetic Sync Section -->
+<section class="md:col-span-12 lg:col-span-6 flex flex-col gap-6">
+<h2 class="text-title-md font-title-md text-primary-fixed-dim flex items-center gap-3">
+<span class="material-symbols-outlined">palette</span>
+                    Aesthetic Sync
+                </h2>
+<div class="bg-surface-container-low/80 backdrop-blur-2xl rounded-xl border border-white/10 inner-glow-top p-6 flex flex-col gap-2">
+<div class="flex justify-between items-center py-4 dashed-divider hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Dark Matter Mode</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">System-wide forced dark theme</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-primary after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container glow-active"></div>
+</label>
+</div>
+<div class="flex justify-between items-center py-4 dashed-divider hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Luminous Contrast</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Enhance glow effects and borders</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-primary after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="flex justify-between items-center py-4 hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Interface Scale</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Adjust global component sizing</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Security Matrix Section -->
+<section class="md:col-span-12 lg:col-span-6 flex flex-col gap-6">
+<h2 class="text-title-md font-title-md text-primary-fixed-dim flex items-center gap-3">
+<span class="material-symbols-outlined">shield_lock</span>
+                    Security Matrix
+                </h2>
+<div class="bg-surface-container-low/80 backdrop-blur-2xl rounded-xl border border-white/10 inner-glow-top p-6 flex flex-col gap-2">
+<div class="flex justify-between items-center py-4 dashed-divider hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Biometric Authentication</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Require fingerprint for elevated tasks</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-primary after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container glow-active"></div>
+</label>
+</div>
+<div class="flex justify-between items-center py-4 dashed-divider hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Firewall Protocols</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Manage active network defenses</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="flex justify-between items-center py-4 hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Encryption Keys</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">View and manage root certificates</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Hardware Interface Section -->
+<section class="md:col-span-12 flex flex-col gap-6 mt-4">
+<h2 class="text-title-md font-title-md text-primary-fixed-dim flex items-center gap-3">
+<span class="material-symbols-outlined">memory</span>
+                    Hardware Interface
+                </h2>
+<div class="bg-surface-container-low/80 backdrop-blur-2xl rounded-xl border border-white/10 inner-glow-top p-6 flex flex-col gap-2">
+<div class="flex justify-between items-center py-4 dashed-divider hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Neural Link Status</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Active connection to external processing units</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-caps font-label-caps text-primary-fixed-dim bg-primary-fixed-dim/10 px-3 py-1 rounded-full border border-primary-fixed-dim/30">CONNECTED</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+<div class="flex justify-between items-center py-4 hover:bg-white/5 transition-colors px-2 -mx-2 rounded-lg cursor-pointer">
+<div class="flex flex-col gap-1">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Power Management</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Configure energy allocation profiles</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Area -->
+<footer class="w-full text-center py-8 text-label-caps font-label-caps text-on-surface-variant border-t border-white/5">
+        Version 1.0.0 - Stable Build
+    </footer>
+<!-- BottomNavBar Component (from JSON - Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface-container-low/80 dark:bg-surface-container-low/80 backdrop-blur-2xl rounded-t-xl border-t border-white/5 shadow-[0_-10px_30px_rgba(170,214,34,0.1)]">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-caps font-label-caps hidden">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed" href="#">
+<span class="material-symbols-outlined">memory</span>
+<span class="text-label-caps font-label-caps hidden">Memory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim p-3 hover:text-primary dark:hover:text-primary-fixed" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-label-caps font-label-caps hidden">Files</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary-fixed-dim bg-primary/10 rounded-full p-3 shadow-[0_0_15px_rgba(170,214,34,0.4)] scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">settings_input_component</span>
+<span class="text-label-caps font-label-caps hidden">Settings</span>
+</a>
+</nav>
+
+
+</body></html>
