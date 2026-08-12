@@ -104,8 +104,8 @@ export const CyberCatCompanion: React.FC = () => {
     }
   };
 
-  // Text-to-Speech (TTS) response aloud with Mic Muting Guard to prevent self-looping!
-  const speakCARText = (text: string) => {
+  // Text-to-Speech (TTS) response aloud with Mic Muting & Auto-Re-Listening Callback!
+  const speakCARText = (text: string, onComplete?: () => void) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       isSpeakingTTSRef.current = true; // Mute speech recognition while AI speaks
@@ -114,17 +114,19 @@ export const CyberCatCompanion: React.FC = () => {
       utterance.rate = 1.0;
       utterance.pitch = 1.1;
 
-      const unMuteMic = () => {
-        // 500ms grace period after AI finishes speaking before unmuting mic
+      const finishTTS = () => {
         setTimeout(() => {
           isSpeakingTTSRef.current = false;
-        }, 500);
+          if (onComplete) onComplete();
+        }, 300);
       };
 
-      utterance.onend = unMuteMic;
-      utterance.onerror = unMuteMic;
+      utterance.onend = finishTTS;
+      utterance.onerror = finishTTS;
 
       window.speechSynthesis.speak(utterance);
+    } else {
+      if (onComplete) onComplete();
     }
   };
 
@@ -209,8 +211,8 @@ export const CyberCatCompanion: React.FC = () => {
         setIsListening(false);
       }
 
-      // Auto-restart in wake word mode
-      if (isWakeWordModeRef.current) {
+      // Auto-restart in wake word mode when not speaking TTS
+      if (isWakeWordModeRef.current && !isSpeakingTTSRef.current && !isThinkingRef.current) {
         setTimeout(() => {
           try {
             rec.start();
@@ -222,7 +224,7 @@ export const CyberCatCompanion: React.FC = () => {
     rec.onend = () => {
       setIsListening(false);
       // Auto-restart loop to keep background wake-word listener alive
-      if (isWakeWordModeRef.current) {
+      if (isWakeWordModeRef.current && !isSpeakingTTSRef.current && !isThinkingRef.current) {
         setTimeout(() => {
           try {
             rec.start();
@@ -254,8 +256,6 @@ export const CyberCatCompanion: React.FC = () => {
     commandDebounceRef.current = setTimeout(() => {
       if (cmdText.trim()) {
         processCARCommand(cmdText.trim());
-        setIsCapturingCommand(false);
-        isCapturingCommandRef.current = false;
       }
     }, 1200);
   };
@@ -460,7 +460,17 @@ export const CyberCatCompanion: React.FC = () => {
 
   const processCARCommand = (rawQuery: string) => {
     const query = rawQuery.trim();
-    if (!query || isThinking) return;
+    if (!query || isThinkingRef.current) return;
+
+    // 1. TURN OFF MIC ENTIRELY WHILE C.A.R. IS THINKING AND SPEAKING
+    try {
+      recognitionRef.current?.stop();
+    } catch (e) {}
+
+    setIsListening(false);
+    setIsThinking(true);
+    isThinkingRef.current = true;
+    setAvatarState('thinking');
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -470,8 +480,6 @@ export const CyberCatCompanion: React.FC = () => {
 
     setChatLog((prev) => [...prev, userMsg]);
     setInputVal('');
-    setIsThinking(true);
-    setAvatarState('thinking');
 
     setTimeout(() => {
       const botReply = generateCARAnswer(query);
@@ -486,10 +494,25 @@ export const CyberCatCompanion: React.FC = () => {
       ]);
 
       setIsThinking(false);
+      isThinkingRef.current = false;
       setAvatarState('chatting');
-      speakCARText(botReply);
-      setTimeout(() => setAvatarState('idle'), 2500);
-    }, 900);
+
+      // 2. SPEAK REPLY ALOUD VIA TTS, THEN AUTOMATICALLY RE-ENABLE MIC FOR NEXT COMMAND!
+      speakCARText(botReply, () => {
+        setAvatarState('idle');
+        setIsCapturingCommand(false);
+        isCapturingCommandRef.current = false;
+
+        // AUTOMATICALLY RE-START MIC FOR SUBSEQUENT COMMANDS!
+        if (isWakeWordModeRef.current) {
+          setTimeout(() => {
+            try {
+              recognitionRef.current?.start();
+            } catch (e) {}
+          }, 300);
+        }
+      });
+    }, 800);
   };
 
   const handleSend = (e?: React.FormEvent) => {
