@@ -47,6 +47,8 @@ export const CyberCatCompanion: React.FC = () => {
   const isWakeWordModeRef = useRef(isWakeWordMode);
   const isCapturingCommandRef = useRef(isCapturingCommand);
   const isThinkingRef = useRef(isThinking);
+  const isSpeakingTTSRef = useRef(false); // Prevents microphone from hearing C.A.R.'s own TTS voice!
+
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -102,6 +104,30 @@ export const CyberCatCompanion: React.FC = () => {
     }
   };
 
+  // Text-to-Speech (TTS) response aloud with Mic Muting Guard to prevent self-looping!
+  const speakCARText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      isSpeakingTTSRef.current = true; // Mute speech recognition while AI speaks
+
+      const utterance = new SpeechSynthesisUtterance(text.replace(/[^\w\s\.,!\?]/gi, ''));
+      utterance.rate = 1.0;
+      utterance.pitch = 1.1;
+
+      const unMuteMic = () => {
+        // 500ms grace period after AI finishes speaking before unmuting mic
+        setTimeout(() => {
+          isSpeakingTTSRef.current = false;
+        }, 500);
+      };
+
+      utterance.onend = unMuteMic;
+      utterance.onerror = unMuteMic;
+
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   // Setup Single Stable Speech Recognition Engine Instance
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -121,7 +147,8 @@ export const CyberCatCompanion: React.FC = () => {
     };
 
     rec.onresult = (event: any) => {
-      if (isThinkingRef.current) return;
+      // IGNORE INPUT WHILE AI IS THINKING OR SPEAKING TTS TO PREVENT RECURSIVE FEEDBACK LOOPS!
+      if (isSpeakingTTSRef.current || isThinkingRef.current) return;
 
       let fullTranscript = '';
       for (let i = 0; i < event.results.length; i++) {
@@ -129,6 +156,17 @@ export const CyberCatCompanion: React.FC = () => {
       }
 
       const normalized = fullTranscript.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+
+      // Mute filter against C.A.R.'s own spoken response phrases
+      if (
+        normalized.includes('voice command accepted') ||
+        normalized.includes('launching') ||
+        normalized.includes('telemetry') ||
+        normalized.includes('commander') ||
+        normalized.includes('car response')
+      ) {
+        return;
+      }
 
       // Check for Wake Word ("Hey Kitty", "HeyKitty", "Hi Kitty", "Hey Cat")
       const wakeMatch = normalized.match(/(hey\s*kitty|hi\s*kitty|hey\s*cat|heykitty)/i);
@@ -253,17 +291,6 @@ export const CyberCatCompanion: React.FC = () => {
       setIsListening(false);
       setIsCapturingCommand(false);
       isCapturingCommandRef.current = false;
-    }
-  };
-
-  // Text-to-Speech (TTS) response aloud
-  const speakCARText = (text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text.replace(/[^\w\s\.,!\?]/gi, ''));
-      utterance.rate = 1.0;
-      utterance.pitch = 1.1;
-      window.speechSynthesis.speak(utterance);
     }
   };
 
