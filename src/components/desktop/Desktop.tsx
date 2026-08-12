@@ -13,6 +13,7 @@ import { ContextMenu } from '../shell/ContextMenu';
 import { WidgetLayer } from '../../widgets/WidgetLayer';
 import { CyberCatCompanion } from './CyberCatCompanion';
 import { BackgroundCanvas } from './BackgroundCanvas';
+import { ScanlineOverlay } from './ScanlineOverlay';
 import { GlobalAudioPlayer } from '../shell/GlobalAudioPlayer';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useWindowStore } from '../../stores/windowStore';
@@ -105,6 +106,9 @@ export const Desktop: React.FC = () => {
 
       {/* Dynamic 3D Fiber Background Canvas Layer */}
       <BackgroundCanvas />
+
+      {/* CRT Scanline Overlay Layer */}
+      <ScanlineOverlay />
 
       {/* Background Wallpaper Layer */}
       <Wallpaper />
