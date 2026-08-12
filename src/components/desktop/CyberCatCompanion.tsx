@@ -43,16 +43,32 @@ export const CyberCatCompanion: React.FC = () => {
   const [isCapturingCommand, setIsCapturingCommand] = useState(false);
   const [avatarState, setAvatarState] = useState<AvatarMoodState>('idle');
 
+  // Mutable Refs for smooth, non-restarting event listeners
+  const isWakeWordModeRef = useRef(isWakeWordMode);
+  const isCapturingCommandRef = useRef(isCapturingCommand);
+  const isThinkingRef = useRef(isThinking);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const recognitionRef = useRef<any>(null);
   const commandDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    isWakeWordModeRef.current = isWakeWordMode;
+  }, [isWakeWordMode]);
+
+  useEffect(() => {
+    isCapturingCommandRef.current = isCapturingCommand;
+  }, [isCapturingCommand]);
+
+  useEffect(() => {
+    isThinkingRef.current = isThinking;
+  }, [isThinking]);
+
   // Rotating tips, greetings, and system status messages
   const contextualTips = [
-    "C.A.R. Wake-Word Enabled! Say 'Hey Kitty' to give hands-free commands!",
+    "C.A.R. Wake-Word Active! Say 'Hey Kitty' to give hands-free commands!",
     "Voice Command Tip: Say 'Hey Kitty, open calculator' or 'Hey Kitty, play music'!",
-    "Tip: Toggle 'Wake Word: Hey Kitty' mode ON/OFF in C.A.R. chat header.",
+    "Tip: Toggle 'Hey Kitty' mode ON/OFF in C.A.R. chat header.",
     "Tip: Press Cmd + K anytime to open the Command Palette!",
     "Greeting: Welcome to Cosmos OS! How can C.A.R. assist you today?",
     "System Status: Memory usage stable at 68% • Network 142.4 Mbps.",
@@ -86,7 +102,7 @@ export const CyberCatCompanion: React.FC = () => {
     }
   };
 
-  // Setup Continuous Speech Recognition Engine with Wake Word ("Hey Kitty")
+  // Setup Single Stable Speech Recognition Engine Instance
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -105,77 +121,85 @@ export const CyberCatCompanion: React.FC = () => {
     };
 
     rec.onresult = (event: any) => {
-      let transcript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
+      if (isThinkingRef.current) return;
+
+      let fullTranscript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        fullTranscript += event.results[i][0].transcript + ' ';
       }
 
-      const normalized = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+      const normalized = fullTranscript.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
 
       // Check for Wake Word ("Hey Kitty", "HeyKitty", "Hi Kitty", "Hey Cat")
       const wakeMatch = normalized.match(/(hey\s*kitty|hi\s*kitty|hey\s*cat|heykitty)/i);
 
-      if (wakeMatch && !isCapturingCommand) {
-        playWakeChime();
-        setIsWakeDetected(true);
-        setIsCapturingCommand(true);
-        setIsExpanded(true);
-        setAvatarState('happy');
+      if (wakeMatch) {
+        // Trigger Wake Word Activation if not already capturing
+        if (!isCapturingCommandRef.current) {
+          playWakeChime();
+          setIsWakeDetected(true);
+          setIsCapturingCommand(true);
+          isCapturingCommandRef.current = true;
+          setIsExpanded(true);
+          setAvatarState('happy');
+          setTimeout(() => setIsWakeDetected(false), 2000);
+        }
 
-        // Extract any spoken command immediately following "Hey Kitty"
-        const splitParts = normalized.split(/(hey\s*kitty|hi\s*kitty|hey\s*cat|heykitty)/i);
-        const commandText = splitParts[splitParts.length - 1]?.trim();
+        // Extract command after wake phrase
+        const commandPart = normalized.replace(/^.*?(hey\s*kitty|hi\s*kitty|hey\s*cat|heykitty)/i, '').trim();
 
-        if (commandText) {
-          setInputVal(commandText);
-          scheduleCommandSubmission(commandText);
+        if (commandPart) {
+          setInputVal(commandPart);
+          scheduleCommandSubmission(commandPart);
         } else {
           setInputVal('');
         }
-
-        setTimeout(() => setIsWakeDetected(false), 2000);
-      } else if (isCapturingCommand) {
-        // Capture user command after wake word
-        const splitParts = normalized.split(/(hey\s*kitty|hi\s*kitty|hey\s*cat|heykitty)/i);
-        const commandText = splitParts[splitParts.length - 1]?.trim() || normalized;
-
-        setInputVal(commandText);
-        scheduleCommandSubmission(commandText);
-      } else if (!isWakeWordMode && transcript) {
-        // Manual Speech Mode
-        setInputVal(transcript);
-        scheduleCommandSubmission(transcript);
+      } else if (isCapturingCommandRef.current || !isWakeWordModeRef.current) {
+        // Capture user command when active or in manual voice mode
+        if (normalized) {
+          setInputVal(normalized);
+          scheduleCommandSubmission(normalized);
+        }
       }
     };
 
     rec.onerror = (err: any) => {
       console.warn('Speech Recognition Warning:', err?.error || err);
-      setIsListening(false);
+      if (err?.error === 'aborted' || err?.error === 'no-speech') {
+        // Ignore expected silence pauses
+      } else {
+        setIsListening(false);
+      }
+
       // Auto-restart in wake word mode
-      if (isWakeWordMode) {
+      if (isWakeWordModeRef.current) {
         setTimeout(() => {
-          try { rec.start(); } catch (e) {}
+          try {
+            rec.start();
+          } catch (e) {}
         }, 400);
       }
     };
 
     rec.onend = () => {
       setIsListening(false);
-      // Resilience Auto-Restart to keep background wake-word listener alive
-      if (isWakeWordMode) {
+      // Auto-restart loop to keep background wake-word listener alive
+      if (isWakeWordModeRef.current) {
         setTimeout(() => {
-          try { rec.start(); } catch (e) {}
+          try {
+            rec.start();
+          } catch (e) {}
         }, 300);
       }
     };
 
     recognitionRef.current = rec;
 
-    if (isWakeWordMode) {
+    if (isWakeWordModeRef.current) {
       try {
         rec.start();
       } catch (err) {
-        console.warn('Could not auto-start wake word engine:', err);
+        console.warn('Could not start initial speech recognition:', err);
       }
     }
 
@@ -184,17 +208,18 @@ export const CyberCatCompanion: React.FC = () => {
         rec.stop();
       } catch (e) {}
     };
-  }, [isWakeWordMode, isCapturingCommand]);
+  }, []); // Mount ONCE to prevent glitching re-creations
 
-  // Debounced Command Submission (~1.4s silence pause)
+  // Debounced Command Submission (~1.2s silence pause)
   const scheduleCommandSubmission = (cmdText: string) => {
     if (commandDebounceRef.current) clearTimeout(commandDebounceRef.current);
     commandDebounceRef.current = setTimeout(() => {
       if (cmdText.trim()) {
         processCARCommand(cmdText.trim());
         setIsCapturingCommand(false);
+        isCapturingCommandRef.current = false;
       }
-    }, 1400);
+    }, 1200);
   };
 
   // Toggle Wake Word Always-Listening Mode
@@ -202,6 +227,8 @@ export const CyberCatCompanion: React.FC = () => {
     if (e) e.stopPropagation();
     const nextVal = !isWakeWordMode;
     setIsWakeWordMode(nextVal);
+    isWakeWordModeRef.current = nextVal;
+
     try {
       localStorage.setItem('car_wake_word_mode', String(nextVal));
     } catch (err) {}
@@ -225,6 +252,7 @@ export const CyberCatCompanion: React.FC = () => {
       } catch (err) {}
       setIsListening(false);
       setIsCapturingCommand(false);
+      isCapturingCommandRef.current = false;
     }
   };
 
