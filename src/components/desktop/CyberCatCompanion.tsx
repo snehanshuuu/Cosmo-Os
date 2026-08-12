@@ -25,14 +25,15 @@ export const CyberCatCompanion: React.FC = () => {
   const [avatarState, setAvatarState] = useState<AvatarMoodState>('idle');
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Rotating tips, greetings, and system status messages
   const contextualTips = [
+    "C.A.R. Status: All system cores nominal. Ask me anything!",
     "Tip: Press Cmd + K anytime to open the Command Palette!",
-    "System Status: All 8 core threads operating smoothly.",
     "Tip: Drag any widget card header (:::) to reposition it on your desktop.",
-    "Greeting: Welcome to Cosmos OS! Ready for a productive session?",
-    "Tip: Access Desktop Widgets & Wallpapers in System Preferences.",
+    "Greeting: Welcome to Cosmos OS! How can C.A.R. assist you today?",
+    "Tip: Customize Wallpapers & Widgets in System Preferences.",
     "System Status: Memory usage stable at 68% • Network 142.4 Mbps.",
   ];
 
@@ -40,7 +41,7 @@ export const CyberCatCompanion: React.FC = () => {
     {
       id: 'msg-1',
       sender: 'car',
-      text: "Greetings Commander! I am CAR :: CYBER AI. Ask me system queries or type 'help', 'status', or 'reset layout'!",
+      text: "Hello Commander! I am C.A.R. (Cybernetic Assistant Companion). Click & ask me any question or type 'help'!",
     },
   ]);
 
@@ -52,9 +53,13 @@ export const CyberCatCompanion: React.FC = () => {
     return () => clearInterval(timer);
   }, [contextualTips.length]);
 
+  // Auto-scroll chat log and auto-focus input when expanded
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatLog, isThinking]);
+    if (isExpanded) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => inputRef.current?.focus(), 150);
+    }
+  }, [isExpanded, chatLog, isThinking]);
 
   const currentTip = contextualTips[tipIndex];
 
@@ -63,11 +68,82 @@ export const CyberCatCompanion: React.FC = () => {
     setIsBouncing(true);
     setIsExpanded((prev) => !prev);
     setShowSpeech(true);
-    setAvatarState((prev) => (prev === 'idle' ? 'happy' : 'idle'));
+    setAvatarState('happy');
     setTimeout(() => {
       setIsBouncing(false);
       setAvatarState('idle');
     }, 1000);
+  };
+
+  // Comprehensive C.A.R. Intelligent AI Response Engine
+  const generateCARAnswer = (query: string): string => {
+    const q = query.toLowerCase();
+
+    // 1. System Shortcuts & Commands
+    if (q.includes('help') || q.includes('command') || q.includes('shortcut')) {
+      return "C.A.R. Guide :: Shortcuts -> Cmd+K (Command Search), Cmd+W (Close Window), Cmd+M (Minimize), Cmd+~ (Switch Windows). Commands -> status, reset layout, time, clear.";
+    }
+
+    // 2. Telemetry & Diagnostics
+    if (q.includes('status') || q.includes('cpu') || q.includes('ram') || q.includes('system') || q.includes('battery')) {
+      return "C.A.R. Diagnostic Telemetry :: CPU Load: 24% | RAM: 68% (Optimal) | Battery: 98% (Charged) | Network: 142.4 Mbps Download.";
+    }
+
+    // 3. Reset Layout Command
+    if (q.includes('reset') || q.includes('layout')) {
+      resetDashboardLayout();
+      pushNotification({
+        title: 'Layout Reset',
+        message: 'Default desktop widget grid restored by C.A.R.',
+        type: 'info',
+        duration: 3000,
+      });
+      return "Restored default desktop widget grid layout for you! 🐾";
+    }
+
+    // 4. Time / Clock
+    if (q.includes('time') || q.includes('clock') || q.includes('date')) {
+      return `Current Local Time: ${new Date().toLocaleTimeString()} | Global Tech Hubs synced on Global Node Clock above! ⏰`;
+    }
+
+    // 5. Weather
+    if (q.includes('weather') || q.includes('temp') || q.includes('temperature')) {
+      return "Cyber City Weather: 72°F · Clear Cyber Sky ☀️ (Full multi-city readouts available on Global Node Clock card above).";
+    }
+
+    // 6. About C.A.R. / Who are you
+    if (q.includes('who are you') || q.includes('what are you') || q.includes('car') || q.includes('name')) {
+      return "I am C.A.R. (Cybernetic Assistant Companion) — your intelligent desktop companion for monitoring system telemetry, executing tasks, and answering questions on Cosmos OS! 🐱⚡";
+    }
+
+    // 7. About Cosmos OS
+    if (q.includes('cosmos') || q.includes('os') || q.includes('desktop') || q.includes('features')) {
+      return "Cosmos OS is a next-gen cybernetic desktop operating system with floating glassmorphism windows, real-time widget telemetry, 3D Fiber background, and built-in apps!";
+    }
+
+    // 8. Greetings & Small Talk
+    if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('good morning') || q.includes('good evening')) {
+      return "Hello Commander! C.A.R. is online and listening. How can I help you today? ☕✨";
+    }
+
+    // 9. Math / Calculator assistance
+    if (q.match(/^[\d\s\+\-\*\/\(\)\.]+$/)) {
+      try {
+        const result = new Function(`return (${query})`)();
+        return `C.A.R. Math Result: ${query} = ${result}`;
+      } catch (err) {
+        return "C.A.R. tried evaluating that math expression, but encountered a syntax query error.";
+      }
+    }
+
+    // 10. General AI Query Fallbacks
+    const fallbackAnswers = [
+      `C.A.R. AI Analysis :: Query '${query}' processed. All system channels remain nominal and operating at peak performance!`,
+      `Interesting query regarding '${query}'! I've logged this in system memory. Is there any specific diagnostic task you'd like me to run?`,
+      `C.A.R. Response :: I've cross-referenced '${query}' with Cosmos OS telemetry. All threads are running smoothly!`,
+    ];
+
+    return fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
   };
 
   const handleSend = (e?: React.FormEvent) => {
@@ -88,29 +164,7 @@ export const CyberCatCompanion: React.FC = () => {
 
     // Simulate AI response calculation with thinking state
     setTimeout(() => {
-      let botReply = '';
-      const q = query.toLowerCase();
-
-      if (q.includes('help') || q.includes('command')) {
-        botReply = "Quick Shortcuts: Cmd+K (Search/Commands), Cmd+W (Close Window), Cmd+M (Minimize), Cmd+~ (Cycle Windows).";
-      } else if (q.includes('status') || q.includes('cpu') || q.includes('ram')) {
-        botReply = "System Diagnostics: CPU Load 24% (Normal), RAM 68%, Battery 98%, Network 142.4 Mbps Download.";
-      } else if (q.includes('weather') || q.includes('temp')) {
-        botReply = "Weather details are available on the Global Node Clock card above! Cyber City Node status is 100% operational 🌐";
-      } else if (q.includes('reset') || q.includes('layout')) {
-        resetDashboardLayout();
-        pushNotification({
-          title: 'Dashboard Layout Reset',
-          message: 'Restored default widget grid positions.',
-          type: 'info',
-          duration: 3000,
-        });
-        botReply = "Restored default desktop widget layout positions for you! 🐾";
-      } else if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
-        botReply = "Hello Commander! I am CAR :: CYBER AI, ready to assist your workflow on Cosmos OS. 🐱⚡";
-      } else {
-        botReply = `Purr... CAR processed '${query}'. All diagnostic channels remain nominal!`;
-      }
+      const botReply = generateCARAnswer(query);
 
       setChatLog((prev) => [
         ...prev,
@@ -124,12 +178,12 @@ export const CyberCatCompanion: React.FC = () => {
       setIsThinking(false);
       setAvatarState('chatting');
       setTimeout(() => setAvatarState('idle'), 2500);
-    }, 1200);
+    }, 1000);
   };
 
   return (
     <div className="fixed bottom-5 left-5 z-30 flex flex-col items-start select-none group">
-      {/* Expanded Interactive CAR :: CYBER AI Chat Console */}
+      {/* Expanded Interactive C.A.R. Chat Panel */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -137,13 +191,13 @@ export const CyberCatCompanion: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="mb-3 w-84 h-80 rounded-2xl bg-black/90 border border-cosmos-lime/60 p-3 flex flex-col justify-between shadow-[0_0_30px_rgba(124,255,0,0.35)] backdrop-blur-xl relative"
+            className="mb-3 w-84 h-84 rounded-2xl bg-black/90 border border-cosmos-lime/60 p-3 flex flex-col justify-between shadow-[0_0_30px_rgba(124,255,0,0.35)] backdrop-blur-xl relative pointer-events-auto"
           >
-            {/* Component Header Rebranded */}
+            {/* Component Header Rebranded to C.A.R. */}
             <div className="flex justify-between items-center border-b border-white/10 pb-2">
               <div className="flex items-center gap-1.5 font-bold text-xs text-white uppercase tracking-wider">
                 <Icons.Sparkles className="w-4 h-4 text-cosmos-lime animate-pulse" />
-                <span className="text-cosmos-lime-bright font-mono">CAR :: CYBER AI</span>
+                <span className="text-cosmos-lime-bright font-mono">C.A.R. :: CYBER AI</span>
               </div>
               <button
                 onClick={() => setIsExpanded(false)}
@@ -162,7 +216,7 @@ export const CyberCatCompanion: React.FC = () => {
                   className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] p-2 rounded-xl text-[11px] leading-relaxed ${
+                    className={`max-w-[85%] p-2.5 rounded-xl text-[11px] leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-cosmos-lime text-black font-semibold shadow-lime-glow'
                         : 'bg-white/10 border border-white/15 text-white'
@@ -177,7 +231,7 @@ export const CyberCatCompanion: React.FC = () => {
               {isThinking && (
                 <div className="flex justify-start">
                   <div className="bg-white/10 border border-cosmos-lime/40 text-cosmos-lime-bright px-3 py-1.5 rounded-xl text-[11px] font-mono flex items-center gap-2 animate-pulse">
-                    <span>CAR is thinking...</span>
+                    <span>C.A.R. is thinking...</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce" />
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.2s]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.4s]" />
@@ -189,13 +243,14 @@ export const CyberCatCompanion: React.FC = () => {
 
             {/* Prompt Input Form */}
             <form onSubmit={handleSend} className="flex gap-1.5 pt-2 border-t border-white/10">
-              <div className="flex-1 flex items-center bg-black/70 border border-white/15 rounded-lg px-2 py-1 text-xs font-mono text-white focus-within:border-cosmos-lime">
+              <div className="flex-1 flex items-center bg-black/70 border border-white/15 rounded-lg px-2.5 py-1 text-xs font-mono text-white focus-within:border-cosmos-lime">
                 <span className="text-cosmos-lime-bright font-bold text-[10px] mr-1.5 whitespace-nowrap">
-                  car@os:~$
+                  car@cosmos:~$
                 </span>
                 <input
+                  ref={inputRef}
                   type="text"
-                  placeholder="Ask CAR..."
+                  placeholder="Ask C.A.R. anything..."
                   value={inputVal}
                   onChange={(e) => setInputVal(e.target.value)}
                   disabled={isThinking}
@@ -205,7 +260,7 @@ export const CyberCatCompanion: React.FC = () => {
               <button
                 type="submit"
                 disabled={isThinking || !inputVal.trim()}
-                className="px-3 py-1 bg-cosmos-lime text-black font-bold text-xs rounded-lg hover:bg-cosmos-lime-bright disabled:opacity-40 transition-all flex items-center justify-center"
+                className="px-3.5 py-1 bg-cosmos-lime text-black font-bold text-xs rounded-lg hover:bg-cosmos-lime-bright disabled:opacity-40 transition-all flex items-center justify-center shadow-lime-glow"
               >
                 Send
               </button>
@@ -225,12 +280,12 @@ export const CyberCatCompanion: React.FC = () => {
               e.stopPropagation();
               setIsExpanded(true);
             }}
-            className="mb-2 max-w-xs p-2.5 rounded-2xl bg-black/85 border border-cosmos-lime/50 text-cosmos-lime-bright text-xs font-mono shadow-[0_0_15px_rgba(124,255,0,0.25)] backdrop-blur-md relative cursor-pointer"
+            className="mb-2 max-w-xs p-2.5 rounded-2xl bg-black/85 border border-cosmos-lime/50 text-cosmos-lime-bright text-xs font-mono shadow-[0_0_15px_rgba(124,255,0,0.25)] backdrop-blur-md relative cursor-pointer pointer-events-auto"
           >
             <div className="flex items-center justify-between gap-1.5 font-bold mb-1 text-white border-b border-white/10 pb-1">
               <div className="flex items-center gap-1.5">
                 <Icons.Sparkles className="w-3.5 h-3.5 text-cosmos-lime" />
-                <span className="font-mono text-cosmos-lime-bright">CAR :: CYBER AI</span>
+                <span className="font-mono text-cosmos-lime-bright">C.A.R. :: CYBER AI</span>
               </div>
               <button
                 onClick={(ev) => {
@@ -244,7 +299,7 @@ export const CyberCatCompanion: React.FC = () => {
             </div>
             <p className="text-[11px] text-white/90 leading-relaxed">{currentTip}</p>
             <span className="text-[9px] font-mono text-cosmos-lime/70 block mt-1">
-              Click to ask CAR a question 💬
+              Click to chat with C.A.R. 💬
             </span>
 
             {/* Speech Bubble Pointer Arrow */}
@@ -253,7 +308,7 @@ export const CyberCatCompanion: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Cyber Cat Dynamic Avatar Character Icon */}
+      {/* C.A.R. Dynamic Cyber Cat Avatar Character Icon */}
       <motion.div
         onClick={handleCatClick}
         animate={isBouncing ? { y: [0, -12, 0] } : { y: [0, -4, 0] }}
@@ -262,7 +317,7 @@ export const CyberCatCompanion: React.FC = () => {
             ? { duration: 0.4, ease: 'easeOut' }
             : { duration: 3, repeat: Infinity, ease: 'easeInOut' }
         }
-        className={`w-13 h-13 rounded-2xl bg-black/85 border-2 p-1.5 flex items-center justify-center relative transition-all cursor-pointer shadow-lg ${
+        className={`w-13 h-13 rounded-2xl bg-black/85 border-2 p-1.5 flex items-center justify-center relative transition-all cursor-pointer shadow-lg pointer-events-auto ${
           avatarState === 'thinking'
             ? 'border-amber-400 shadow-[0_0_25px_rgba(255,193,7,0.6)]'
             : avatarState === 'chatting'
@@ -271,7 +326,7 @@ export const CyberCatCompanion: React.FC = () => {
             ? 'border-cyan-400 shadow-[0_0_25px_rgba(0,240,255,0.6)]'
             : 'border-cosmos-lime/70 shadow-[0_0_20px_rgba(124,255,0,0.35)] group-hover:border-cosmos-lime group-hover:shadow-[0_0_25px_rgba(124,255,0,0.6)]'
         }`}
-        title="Click CAR :: CYBER AI"
+        title="Click to chat with C.A.R. :: CYBER AI"
       >
         {/* Dynamic SVG Cyber Cat Avatar with Mood Expressions */}
         <svg viewBox="0 0 64 64" className="w-full h-full text-cosmos-lime fill-none stroke-current stroke-[2.5]">
