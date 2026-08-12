@@ -6,9 +6,11 @@ import * as Icons from 'lucide-react';
 
 interface ChatMessage {
   id: string;
-  sender: 'cat' | 'user';
+  sender: 'car' | 'user';
   text: string;
 }
+
+type AvatarMoodState = 'idle' | 'thinking' | 'chatting' | 'happy';
 
 export const CyberCatCompanion: React.FC = () => {
   const { resetDashboardLayout } = useWidgetStore();
@@ -19,6 +21,8 @@ export const CyberCatCompanion: React.FC = () => {
   const [showSpeech, setShowSpeech] = useState(true);
   const [tipIndex, setTipIndex] = useState(0);
   const [inputVal, setInputVal] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [avatarState, setAvatarState] = useState<AvatarMoodState>('idle');
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,8 +39,8 @@ export const CyberCatCompanion: React.FC = () => {
   const [chatLog, setChatLog] = useState<ChatMessage[]>([
     {
       id: 'msg-1',
-      sender: 'cat',
-      text: "Meow! I'm your Cyber Cat Mini Assistant. Ask me anything or type 'help', 'status', 'weather', or 'reset layout'!",
+      sender: 'car',
+      text: "Greetings Commander! I am CAR :: CYBER AI. Ask me system queries or type 'help', 'status', or 'reset layout'!",
     },
   ]);
 
@@ -50,7 +54,7 @@ export const CyberCatCompanion: React.FC = () => {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatLog]);
+  }, [chatLog, isThinking]);
 
   const currentTip = contextualTips[tipIndex];
 
@@ -58,13 +62,18 @@ export const CyberCatCompanion: React.FC = () => {
     e.stopPropagation();
     setIsBouncing(true);
     setIsExpanded((prev) => !prev);
-    setTimeout(() => setIsBouncing(false), 500);
+    setShowSpeech(true);
+    setAvatarState((prev) => (prev === 'idle' ? 'happy' : 'idle'));
+    setTimeout(() => {
+      setIsBouncing(false);
+      setAvatarState('idle');
+    }, 1000);
   };
 
   const handleSend = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const query = inputVal.trim();
-    if (!query) return;
+    if (!query || isThinking) return;
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -74,8 +83,10 @@ export const CyberCatCompanion: React.FC = () => {
 
     setChatLog((prev) => [...prev, userMsg]);
     setInputVal('');
+    setIsThinking(true);
+    setAvatarState('thinking');
 
-    // Generate intelligent AI Assistant response
+    // Simulate AI response calculation with thinking state
     setTimeout(() => {
       let botReply = '';
       const q = query.toLowerCase();
@@ -96,25 +107,29 @@ export const CyberCatCompanion: React.FC = () => {
         });
         botReply = "Restored default desktop widget layout positions for you! 🐾";
       } else if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
-        botReply = "Hello Commander! I'm here to monitor your system and assist you on Cosmos OS. 🐱⚡";
+        botReply = "Hello Commander! I am CAR :: CYBER AI, ready to assist your workflow on Cosmos OS. 🐱⚡";
       } else {
-        botReply = `Purr... Noted! I'm keeping an eye on '${query}' for you. Anything else I can do?`;
+        botReply = `Purr... CAR processed '${query}'. All diagnostic channels remain nominal!`;
       }
 
       setChatLog((prev) => [
         ...prev,
         {
-          id: `cat-${Date.now()}`,
-          sender: 'cat',
+          id: `car-${Date.now()}`,
+          sender: 'car',
           text: botReply,
         },
       ]);
-    }, 400);
+
+      setIsThinking(false);
+      setAvatarState('chatting');
+      setTimeout(() => setAvatarState('idle'), 2500);
+    }, 1200);
   };
 
   return (
     <div className="fixed bottom-5 left-5 z-30 flex flex-col items-start select-none group">
-      {/* Expanded Interactive Mini Assistant Chat Console */}
+      {/* Expanded Interactive CAR :: CYBER AI Chat Console */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -122,24 +137,25 @@ export const CyberCatCompanion: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="mb-3 w-80 h-72 rounded-2xl bg-black/90 border border-cosmos-lime/60 p-3 flex flex-col justify-between shadow-[0_0_25px_rgba(124,255,0,0.3)] backdrop-blur-xl relative"
+            className="mb-3 w-84 h-80 rounded-2xl bg-black/90 border border-cosmos-lime/60 p-3 flex flex-col justify-between shadow-[0_0_30px_rgba(124,255,0,0.35)] backdrop-blur-xl relative"
           >
-            {/* Header */}
+            {/* Component Header Rebranded */}
             <div className="flex justify-between items-center border-b border-white/10 pb-2">
-              <div className="flex items-center gap-1.5 font-bold text-xs text-white">
-                <Icons.Sparkles className="w-4 h-4 text-cosmos-lime" />
-                <span>CYBER CAT MINI ASSISTANT</span>
+              <div className="flex items-center gap-1.5 font-bold text-xs text-white uppercase tracking-wider">
+                <Icons.Sparkles className="w-4 h-4 text-cosmos-lime animate-pulse" />
+                <span className="text-cosmos-lime-bright font-mono">CAR :: CYBER AI</span>
               </div>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="text-cosmos-text-muted hover:text-white transition-colors"
+                className="text-white/40 hover:text-white transition-colors p-0.5"
+                title="Close Chat"
               >
                 <Icons.X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Chat Message Stream */}
-            <div className="flex-1 overflow-y-auto my-2 flex flex-col gap-2 p-1 font-mono text-xs">
+            <div className="flex-1 overflow-y-auto my-2 flex flex-col gap-2 p-1 font-mono text-xs scrollbar-thin">
               {chatLog.map((msg) => (
                 <div
                   key={msg.id}
@@ -148,7 +164,7 @@ export const CyberCatCompanion: React.FC = () => {
                   <div
                     className={`max-w-[85%] p-2 rounded-xl text-[11px] leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-cosmos-lime text-black font-semibold'
+                        ? 'bg-cosmos-lime text-black font-semibold shadow-lime-glow'
                         : 'bg-white/10 border border-white/15 text-white'
                     }`}
                   >
@@ -156,21 +172,40 @@ export const CyberCatCompanion: React.FC = () => {
                   </div>
                 </div>
               ))}
+
+              {/* Typing State Indicator */}
+              {isThinking && (
+                <div className="flex justify-start">
+                  <div className="bg-white/10 border border-cosmos-lime/40 text-cosmos-lime-bright px-3 py-1.5 rounded-xl text-[11px] font-mono flex items-center gap-2 animate-pulse">
+                    <span>CAR is thinking...</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.2s]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.4s]" />
+                  </div>
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
 
             {/* Prompt Input Form */}
             <form onSubmit={handleSend} className="flex gap-1.5 pt-2 border-t border-white/10">
-              <input
-                type="text"
-                placeholder="Ask Cyber Cat... (e.g. status, help)"
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                className="flex-1 bg-black/60 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-cosmos-lime"
-              />
+              <div className="flex-1 flex items-center bg-black/70 border border-white/15 rounded-lg px-2 py-1 text-xs font-mono text-white focus-within:border-cosmos-lime">
+                <span className="text-cosmos-lime-bright font-bold text-[10px] mr-1.5 whitespace-nowrap">
+                  car@os:~$
+                </span>
+                <input
+                  type="text"
+                  placeholder="Ask CAR..."
+                  value={inputVal}
+                  onChange={(e) => setInputVal(e.target.value)}
+                  disabled={isThinking}
+                  className="w-full bg-transparent text-xs font-mono text-white focus:outline-none placeholder:text-white/30"
+                />
+              </div>
               <button
                 type="submit"
-                className="px-3 py-1.5 bg-cosmos-lime text-black font-bold text-xs rounded-lg hover:bg-cosmos-lime-bright transition-colors"
+                disabled={isThinking || !inputVal.trim()}
+                className="px-3 py-1 bg-cosmos-lime text-black font-bold text-xs rounded-lg hover:bg-cosmos-lime-bright disabled:opacity-40 transition-all flex items-center justify-center"
               >
                 Send
               </button>
@@ -195,7 +230,7 @@ export const CyberCatCompanion: React.FC = () => {
             <div className="flex items-center justify-between gap-1.5 font-bold mb-1 text-white border-b border-white/10 pb-1">
               <div className="flex items-center gap-1.5">
                 <Icons.Sparkles className="w-3.5 h-3.5 text-cosmos-lime" />
-                <span>ASSISTANT TIP</span>
+                <span className="font-mono text-cosmos-lime-bright">CAR :: CYBER AI</span>
               </div>
               <button
                 onClick={(ev) => {
@@ -209,7 +244,7 @@ export const CyberCatCompanion: React.FC = () => {
             </div>
             <p className="text-[11px] text-white/90 leading-relaxed">{currentTip}</p>
             <span className="text-[9px] font-mono text-cosmos-lime/70 block mt-1">
-              Click to open Mini Assistant Chat 💬
+              Click to ask CAR a question 💬
             </span>
 
             {/* Speech Bubble Pointer Arrow */}
@@ -218,7 +253,7 @@ export const CyberCatCompanion: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Cyber Cat Character Icon (Clickable Trigger) */}
+      {/* Cyber Cat Dynamic Avatar Character Icon */}
       <motion.div
         onClick={handleCatClick}
         animate={isBouncing ? { y: [0, -12, 0] } : { y: [0, -4, 0] }}
@@ -227,26 +262,79 @@ export const CyberCatCompanion: React.FC = () => {
             ? { duration: 0.4, ease: 'easeOut' }
             : { duration: 3, repeat: Infinity, ease: 'easeInOut' }
         }
-        className="w-12 h-12 rounded-2xl bg-black/80 border-2 border-cosmos-lime/70 p-1.5 flex items-center justify-center relative shadow-[0_0_20px_rgba(124,255,0,0.35)] group-hover:border-cosmos-lime group-hover:shadow-[0_0_25px_rgba(124,255,0,0.6)] transition-all cursor-pointer"
+        className={`w-13 h-13 rounded-2xl bg-black/85 border-2 p-1.5 flex items-center justify-center relative transition-all cursor-pointer shadow-lg ${
+          avatarState === 'thinking'
+            ? 'border-amber-400 shadow-[0_0_25px_rgba(255,193,7,0.6)]'
+            : avatarState === 'chatting'
+            ? 'border-cosmos-lime shadow-[0_0_25px_rgba(124,255,0,0.6)]'
+            : avatarState === 'happy'
+            ? 'border-cyan-400 shadow-[0_0_25px_rgba(0,240,255,0.6)]'
+            : 'border-cosmos-lime/70 shadow-[0_0_20px_rgba(124,255,0,0.35)] group-hover:border-cosmos-lime group-hover:shadow-[0_0_25px_rgba(124,255,0,0.6)]'
+        }`}
+        title="Click CAR :: CYBER AI"
       >
-        {/* Cat SVG Illustration with Glowing Neon Eyes */}
+        {/* Dynamic SVG Cyber Cat Avatar with Mood Expressions */}
         <svg viewBox="0 0 64 64" className="w-full h-full text-cosmos-lime fill-none stroke-current stroke-[2.5]">
           {/* Ears */}
-          <polygon points="12,24 20,8 28,20" fill="rgba(124,255,0,0.2)" />
-          <polygon points="52,24 44,8 36,20" fill="rgba(124,255,0,0.2)" />
+          <polygon
+            points="12,24 20,8 28,20"
+            fill={avatarState === 'thinking' ? 'rgba(255,193,7,0.3)' : 'rgba(124,255,0,0.2)'}
+          />
+          <polygon
+            points="52,24 44,8 36,20"
+            fill={avatarState === 'thinking' ? 'rgba(255,193,7,0.3)' : 'rgba(124,255,0,0.2)'}
+          />
+
           {/* Head Outline */}
-          <rect x="14" y="20" width="36" height="32" rx="12" fill="rgba(0,0,0,0.8)" />
-          {/* Glowing Eyes */}
-          <circle cx="24" cy="32" r="3.5" fill="#00F0FF" className="animate-pulse" />
-          <circle cx="40" cy="32" r="3.5" fill="#00F0FF" className="animate-pulse" />
-          {/* Cute Nose & Whiskers */}
-          <polygon points="32,38 29,35 35,35" fill="#7CFF00" />
+          <rect x="14" y="20" width="36" height="32" rx="12" fill="rgba(0,0,0,0.9)" />
+
+          {/* Dynamic Mood Eyes */}
+          {avatarState === 'thinking' ? (
+            <>
+              {/* Amber Thinking Scanner Eyes */}
+              <circle cx="24" cy="32" r="4" fill="#FFC107" className="animate-ping" />
+              <circle cx="40" cy="32" r="4" fill="#FFC107" className="animate-ping" />
+              <line x1="18" y1="32" x2="46" y2="32" stroke="#FFC107" strokeWidth="1.5" className="animate-pulse" />
+            </>
+          ) : avatarState === 'chatting' ? (
+            <>
+              {/* Bright Lime Active Chatting Eyes */}
+              <circle cx="24" cy="32" r="3.5" fill="#7CFF00" />
+              <circle cx="40" cy="32" r="3.5" fill="#7CFF00" />
+              {/* Cute Happy Mouth */}
+              <path d="M 27,39 Q 32,44 37,39" fill="none" stroke="#7CFF00" strokeWidth="2" strokeLinecap="round" />
+            </>
+          ) : avatarState === 'happy' ? (
+            <>
+              {/* Dual Star/Sparkle Eyes */}
+              <circle cx="24" cy="32" r="3.5" fill="#00F0FF" />
+              <circle cx="40" cy="32" r="3.5" fill="#FF2D55" />
+              <path d="M 26,38 Q 32,45 38,38" fill="none" stroke="#00F0FF" strokeWidth="2.5" strokeLinecap="round" />
+            </>
+          ) : (
+            <>
+              {/* Idle Cyan Eyes */}
+              <circle cx="24" cy="32" r="3.5" fill="#00F0FF" className="animate-pulse" />
+              <circle cx="40" cy="32" r="3.5" fill="#00F0FF" className="animate-pulse" />
+              <polygon points="32,38 29,35 35,35" fill="#7CFF00" />
+            </>
+          )}
+
+          {/* Whiskers */}
           <path d="M 10,34 L 20,35 M 10,40 L 20,38" stroke="#7CFF00" strokeWidth="1.5" />
           <path d="M 54,34 L 44,35 M 54,40 L 44,38" stroke="#7CFF00" strokeWidth="1.5" />
         </svg>
 
-        {/* Pulse Status Dot */}
-        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-cosmos-lime shadow-lime-glow animate-pulse" />
+        {/* Pulse Status Indicator Dot */}
+        <span
+          className={`absolute top-1 right-1 w-2.5 h-2.5 rounded-full animate-pulse ${
+            avatarState === 'thinking'
+              ? 'bg-amber-400 shadow-[0_0_8px_#FFC107]'
+              : avatarState === 'happy'
+              ? 'bg-cyan-400 shadow-[0_0_8px_#00F0FF]'
+              : 'bg-cosmos-lime shadow-lime-glow'
+          }`}
+        />
       </motion.div>
     </div>
   );
