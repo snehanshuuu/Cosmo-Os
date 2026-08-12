@@ -1,28 +1,28 @@
 import { create } from 'zustand';
 import { WidgetState, WidgetType, WindowPosition } from '../types';
 
-export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout_v3';
-export const LEGACY_STORAGE_KEY = 'cosmos_widget_layout_v2';
+export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout_v4';
+export const LEGACY_STORAGE_KEY = 'cosmos_widget_layout_v3';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
-  // Left Column: Terminal Stream -> System Diagnostics
-  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
+  // Left Column (Column 1: x=40px, w=320px -> ends x=360px)
+  { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 40, y: 160 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 40, y: 440 }, isVisible: true },
 
-  // Center Screen Area: Global Node Clock & Mini Player Centered Away From Top
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 340, y: 180 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 640, y: 210 }, isVisible: true },
+  // Center Column (Column 2: Clock x=380px w=340px -> ends x=720px | Mini Player x=740px w=300px -> ends x=1040px)
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 380, y: 160 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 740, y: 190 }, isVisible: true },
 
-  // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
-  { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
-  { id: 'w-calendar', type: 'calendar', position: { x: 1220, y: 280 }, isVisible: true },
-  { id: 'w-notes', type: 'notes', position: { x: 1220, y: 520 }, isVisible: true },
-  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
+  // Right Column (Column 3: x=1060px)
+  { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1060, y: 50 }, isVisible: true },
+  { id: 'w-calendar', type: 'calendar', position: { x: 1060, y: 270 }, isVisible: true },
+  { id: 'w-notes', type: 'notes', position: { x: 1060, y: 500 }, isVisible: true },
+  { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1060, y: 700 }, isVisible: true },
 
   // Background/Hidden Widgets (Available in settings)
-  { id: 'w-tasks', type: 'tasks', position: { x: 30, y: 580 }, isVisible: false },
-  { id: 'w-weather', type: 'weather', position: { x: 30, y: 650 }, isVisible: false },
-  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 450, y: 340 }, isVisible: false },
+  { id: 'w-tasks', type: 'tasks', position: { x: 40, y: 680 }, isVisible: false },
+  { id: 'w-weather', type: 'weather', position: { x: 40, y: 740 }, isVisible: false },
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 380, y: 440 }, isVisible: false },
 ];
 
 const loadWidgets = (): WidgetState[] => {
@@ -32,22 +32,30 @@ const loadWidgets = (): WidgetState[] => {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
         const filtered = parsed.filter((w) => w.type !== 'clock');
+
+        // Apply strict engineered grid alignment
+        const terminalStream = filtered.find((w) => w.type === 'terminal-stream');
+        if (terminalStream) terminalStream.position = { x: 40, y: 160 };
+
+        const systemStats = filtered.find((w) => w.type === 'system-stats');
+        if (systemStats) systemStats.position = { x: 40, y: 440 };
+
         const nodeClock = filtered.find((w) => w.type === 'global-node-clock');
         if (!nodeClock) {
           filtered.unshift({
             id: 'w-global-node-clock',
             type: 'global-node-clock',
-            position: { x: 340, y: 180 },
+            position: { x: 380, y: 160 },
             isVisible: true,
           });
         } else {
-          nodeClock.position = { x: 340, y: 180 };
+          nodeClock.position = { x: 380, y: 160 };
           nodeClock.isVisible = true;
         }
 
         const musicWidget = filtered.find((w) => w.type === 'music');
         if (musicWidget) {
-          musicWidget.position = { x: 640, y: 210 };
+          musicWidget.position = { x: 740, y: 190 };
           musicWidget.isVisible = true;
         }
 
