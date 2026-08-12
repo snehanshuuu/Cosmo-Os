@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 import { WidgetState, WidgetType, WindowPosition } from '../types';
 
-export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout_v2';
-export const LEGACY_STORAGE_KEY = 'cosmos_widget_layout';
+export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout_v3';
+export const LEGACY_STORAGE_KEY = 'cosmos_widget_layout_v2';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
   // Left Column: Terminal Stream -> System Diagnostics
   { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
   { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
 
-  // Center Area: Global Node Clock & Mini Player (Exact User Layout)
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 340, y: 50 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 640, y: 90 }, isVisible: true },
+  // Center Screen Area: Global Node Clock & Mini Player Centered Away From Top
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 340, y: 180 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 640, y: 210 }, isVisible: true },
 
   // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
   { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
@@ -37,17 +37,17 @@ const loadWidgets = (): WidgetState[] => {
           filtered.unshift({
             id: 'w-global-node-clock',
             type: 'global-node-clock',
-            position: { x: 340, y: 50 },
+            position: { x: 340, y: 180 },
             isVisible: true,
           });
         } else {
-          nodeClock.position = { x: 340, y: 50 };
+          nodeClock.position = { x: 340, y: 180 };
           nodeClock.isVisible = true;
         }
 
         const musicWidget = filtered.find((w) => w.type === 'music');
         if (musicWidget) {
-          musicWidget.position = { x: 640, y: 90 };
+          musicWidget.position = { x: 640, y: 210 };
           musicWidget.isVisible = true;
         }
 
