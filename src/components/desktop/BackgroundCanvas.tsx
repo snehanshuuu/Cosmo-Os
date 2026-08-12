@@ -134,6 +134,9 @@ const SceneContent: React.FC = () => {
 
   return (
     <group ref={tiltGroupRef}>
+      {/* Exponential Depth Fog matched to dark cyberpunk background (#060d08, density=0.035) */}
+      <fogExp2 attach="fog" args={['#060d08', 0.035]} />
+
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} color="#00F0FF" />
       <pointLight position={[-10, -10, -10]} intensity={1.5} color="#7CFF00" />
