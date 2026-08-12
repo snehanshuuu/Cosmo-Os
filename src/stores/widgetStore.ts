@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 import { WidgetState, WidgetType, WindowPosition } from '../types';
 
-export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
-export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
+export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout_v2';
+export const LEGACY_STORAGE_KEY = 'cosmos_widget_layout';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
   // Left Column: Terminal Stream -> System Diagnostics
   { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
   { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
 
-  // Center Area: Global Node Clock in Center Top & Mini Player right beside it
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 450, y: 50 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 740, y: 50 }, isVisible: true },
+  // Center Area: Global Node Clock & Mini Player (Exact User Layout)
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 340, y: 50 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 640, y: 90 }, isVisible: true },
 
   // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
   { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
@@ -31,29 +31,28 @@ const loadWidgets = (): WidgetState[] => {
     if (saved) {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Filter out legacy clock and ensure Global Node Clock is present and visible
         const filtered = parsed.filter((w) => w.type !== 'clock');
         const nodeClock = filtered.find((w) => w.type === 'global-node-clock');
         if (!nodeClock) {
           filtered.unshift({
             id: 'w-global-node-clock',
             type: 'global-node-clock',
-            position: { x: 450, y: 50 },
+            position: { x: 340, y: 50 },
             isVisible: true,
           });
         } else {
+          nodeClock.position = { x: 340, y: 50 };
           nodeClock.isVisible = true;
         }
 
         const musicWidget = filtered.find((w) => w.type === 'music');
         if (musicWidget) {
-          musicWidget.position = { x: 740, y: 50 };
+          musicWidget.position = { x: 640, y: 90 };
           musicWidget.isVisible = true;
         }
 
-        // Hide tasks by default if present
         const tasksWidget = filtered.find((w) => w.type === 'tasks');
-        if (tasksWidget && tasksWidget.position.y === 550) {
+        if (tasksWidget) {
           tasksWidget.isVisible = false;
         }
 
