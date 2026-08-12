@@ -5,14 +5,13 @@ export const LOCAL_STORAGE_KEY = 'cosmos_widget_layout';
 export const LEGACY_STORAGE_KEY = 'cosmos_os_widgets';
 
 const DEFAULT_WIDGETS: WidgetState[] = [
-  // Left Column: Terminal Stream -> System Diagnostics -> Cyber Tasks
+  // Left Column: Terminal Stream -> System Diagnostics
   { id: 'w-terminal-stream', type: 'terminal-stream', position: { x: 30, y: 50 }, isVisible: true },
-  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 300 }, isVisible: true },
-  { id: 'w-tasks', type: 'tasks', position: { x: 30, y: 550 }, isVisible: true },
+  { id: 'w-system-stats', type: 'system-stats', position: { x: 30, y: 350 }, isVisible: true },
 
-  // Center Area: Global Node Clock & Mini Player
-  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 470, y: 50 }, isVisible: true },
-  { id: 'w-music', type: 'music', position: { x: 740, y: 340 }, isVisible: true },
+  // Center Area: Global Node Clock in Center Top & Mini Player right beside it
+  { id: 'w-global-node-clock', type: 'global-node-clock', position: { x: 450, y: 50 }, isVisible: true },
+  { id: 'w-music', type: 'music', position: { x: 740, y: 50 }, isVisible: true },
 
   // Right Column: Network Telemetry -> Calendar -> Quick Notes -> Quick Actions
   { id: 'w-network-telemetry', type: 'network-telemetry', position: { x: 1220, y: 50 }, isVisible: true },
@@ -21,8 +20,9 @@ const DEFAULT_WIDGETS: WidgetState[] = [
   { id: 'w-quick-actions', type: 'quick-actions', position: { x: 1220, y: 720 }, isVisible: true },
 
   // Background/Hidden Widgets (Available in settings)
+  { id: 'w-tasks', type: 'tasks', position: { x: 30, y: 580 }, isVisible: false },
   { id: 'w-weather', type: 'weather', position: { x: 30, y: 650 }, isVisible: false },
-  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 470, y: 340 }, isVisible: false },
+  { id: 'w-theme-display-control', type: 'theme-display-control', position: { x: 450, y: 340 }, isVisible: false },
 ];
 
 const loadWidgets = (): WidgetState[] => {
@@ -31,28 +31,30 @@ const loadWidgets = (): WidgetState[] => {
     if (saved) {
       const parsed: WidgetState[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Filter out legacy clock and ensure Global Node Clock & Tasks widgets are present
+        // Filter out legacy clock and ensure Global Node Clock is present and visible
         const filtered = parsed.filter((w) => w.type !== 'clock');
         const nodeClock = filtered.find((w) => w.type === 'global-node-clock');
         if (!nodeClock) {
           filtered.unshift({
             id: 'w-global-node-clock',
             type: 'global-node-clock',
-            position: { x: 470, y: 50 },
+            position: { x: 450, y: 50 },
             isVisible: true,
           });
         } else {
           nodeClock.isVisible = true;
         }
 
+        const musicWidget = filtered.find((w) => w.type === 'music');
+        if (musicWidget) {
+          musicWidget.position = { x: 740, y: 50 };
+          musicWidget.isVisible = true;
+        }
+
+        // Hide tasks by default if present
         const tasksWidget = filtered.find((w) => w.type === 'tasks');
-        if (!tasksWidget) {
-          filtered.push({
-            id: 'w-tasks',
-            type: 'tasks',
-            position: { x: 30, y: 550 },
-            isVisible: true,
-          });
+        if (tasksWidget && tasksWidget.position.y === 550) {
+          tasksWidget.isVisible = false;
         }
 
         return filtered;
