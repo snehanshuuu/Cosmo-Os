@@ -19,7 +19,7 @@ const FloatingCyberShape: React.FC<{
   const meshRef = useRef<THREE.Mesh>(null!);
   const wireframeRef = useRef<THREE.LineSegments>(null!);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (meshRef.current) {
       meshRef.current.rotation.x += delta * 0.3 * rotationSpeed;
       meshRef.current.rotation.y += delta * 0.5 * rotationSpeed;
@@ -81,10 +81,11 @@ const ParticleStarfield: React.FC = () => {
     return [pos, col];
   }, []);
 
-  useFrame((state, delta) => {
+  // Frame-rate independent slow ambient spin for particles (parallax effect)
+  useFrame((_, delta) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y += delta * 0.05;
-      pointsRef.current.rotation.x += delta * 0.02;
+      pointsRef.current.rotation.y += delta * 0.008; // Slower spin for background depth
+      pointsRef.current.rotation.x += delta * 0.003;
     }
   });
 
@@ -111,33 +112,41 @@ const ParticleStarfield: React.FC = () => {
   );
 };
 
-// Interactive Scene Container with Mouse Tilt Interactivity
+// Interactive Scene Container with Frame-Rate Independent Constant Rotation & Mouse Tilt
 const SceneContent: React.FC = () => {
-  const groupRef = useRef<THREE.Group>(null!);
+  const tiltGroupRef = useRef<THREE.Group>(null!);
+  const shapesGroupRef = useRef<THREE.Group>(null!);
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      // Smoothly tilt 3D scene based on mouse coordinates (state.pointer.x, state.pointer.y)
+  useFrame((state, delta) => {
+    // 1. Frame-rate independent linear continuous ambient rotation (0.02 rad/sec)
+    if (shapesGroupRef.current) {
+      shapesGroupRef.current.rotation.y += delta * 0.02;
+    }
+
+    // 2. Mouse tilt interactivity (applies smoothly on parent group)
+    if (tiltGroupRef.current) {
       const targetX = state.pointer.y * 0.25;
       const targetY = state.pointer.x * 0.25;
-      groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * 0.05;
-      groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * 0.05;
+      tiltGroupRef.current.rotation.x += (targetX - tiltGroupRef.current.rotation.x) * 0.05;
+      tiltGroupRef.current.rotation.y += (targetY - tiltGroupRef.current.rotation.y) * 0.05;
     }
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={tiltGroupRef}>
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} color="#00F0FF" />
       <pointLight position={[-10, -10, -10]} intensity={1.5} color="#7CFF00" />
 
-      {/* Floating 3D Cyber Shapes */}
-      <FloatingCyberShape position={[-6, 3, -5]} scale={1.8} color="#7CFF00" wireframeColor="#00F0FF" rotationSpeed={0.4} />
-      <FloatingCyberShape position={[7, -2, -4]} scale={1.5} color="#00F0FF" wireframeColor="#7CFF00" rotationSpeed={0.6} />
-      <FloatingCyberShape position={[-4, -4, -6]} scale={1.2} color="#BF5AF2" wireframeColor="#00F0FF" rotationSpeed={0.5} />
-      <FloatingCyberShape position={[5, 4, -7]} scale={2.2} color="#7CFF00" wireframeColor="#FF9F0A" rotationSpeed={0.3} />
+      {/* Rotating Group of 3D Octahedrons (0.02 * delta rad/sec constant ambient spin) */}
+      <group ref={shapesGroupRef}>
+        <FloatingCyberShape position={[-6, 3, -5]} scale={1.8} color="#7CFF00" wireframeColor="#00F0FF" rotationSpeed={0.4} />
+        <FloatingCyberShape position={[7, -2, -4]} scale={1.5} color="#00F0FF" wireframeColor="#7CFF00" rotationSpeed={0.6} />
+        <FloatingCyberShape position={[-4, -4, -6]} scale={1.2} color="#BF5AF2" wireframeColor="#00F0FF" rotationSpeed={0.5} />
+        <FloatingCyberShape position={[5, 4, -7]} scale={2.2} color="#7CFF00" wireframeColor="#FF9F0A" rotationSpeed={0.3} />
+      </group>
 
-      {/* Particle Starfield */}
+      {/* Parallax Particle Starfield */}
       <ParticleStarfield />
     </group>
   );
