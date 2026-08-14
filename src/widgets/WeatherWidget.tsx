@@ -11,10 +11,10 @@ export const WeatherWidget: React.FC = () => {
       <div className="flex items-center justify-between mt-1">
         <div className="flex items-center gap-2">
           <Icons.Sun className="w-6 h-6 text-amber-400" />
-          <span className="text-2xl font-bold font-display text-white">72°F</span>
+          <span className="text-2xl font-bold font-display text-white">22°C</span>
         </div>
       </div>
-      <div className="text-[11px] text-cosmos-text-secondary mt-1">Clear Cyber Sky • H:76° L:62°</div>
+      <div className="text-[11px] text-cosmos-text-secondary mt-1">Clear Cyber Sky • H:24°C L:18°C</div>
     </div>
   );
 };

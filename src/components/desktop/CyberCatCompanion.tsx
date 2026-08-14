@@ -104,13 +104,23 @@ export const CyberCatCompanion: React.FC = () => {
     }
   };
 
-  // Text-to-Speech (TTS) response aloud with Mic Muting & Auto-Re-Listening Callback!
+  // Text-to-Speech (TTS) response aloud with Mic Muting & Natural Time/Temp Phonetics!
   const speakCARText = (text: string, onComplete?: () => void) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       isSpeakingTTSRef.current = true; // Mute speech recognition while AI speaks
 
-      const utterance = new SpeechSynthesisUtterance(text.replace(/[^\w\s\.,!\?]/gi, ''));
+      // Phonetic transformations for natural pronunciation (e.g., "7:30" -> "7 30", "22°C" -> "22 degrees Celsius")
+      let spokenText = text
+        .replace(/(\d+)\s*°\s*C/gi, '$1 degrees Celsius')
+        .replace(/(\d+)\s*°\s*F/gi, '$1 degrees Fahrenheit')
+        .replace(/(\d{1,2}):(\d{2})(?::\d{2})?/g, (_, p1, p2) => {
+          const mins = parseInt(p2, 10);
+          return mins === 0 ? `${p1} o clock` : `${p1} ${p2}`;
+        })
+        .replace(/[^\w\s\.,!\?']/gi, ' ');
+
+      const utterance = new SpeechSynthesisUtterance(spokenText);
       utterance.rate = 1.0;
       utterance.pitch = 1.1;
 
@@ -413,14 +423,18 @@ export const CyberCatCompanion: React.FC = () => {
       return "Restored default desktop widget grid layout for you! 🐾";
     }
 
-    // 4. Time / Clock
+    // 4. Time / Clock (Formatted for natural speech, e.g. 7:30 PM)
     if (q.includes('time') || q.includes('clock') || q.includes('date')) {
-      return `Current Local Time is ${new Date().toLocaleTimeString()} ⏰`;
+      const now = new Date();
+      const hours = now.getHours() % 12 || 12;
+      const mins = now.getMinutes().toString().padStart(2, '0');
+      const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+      return `Current Local Time is ${hours}:${mins} ${ampm} ⏰`;
     }
 
-    // 5. Weather
+    // 5. Weather (Celsius °C)
     if (q.includes('weather') || q.includes('temp')) {
-      return "Cyber City Weather: 72°F and Clear ☀️";
+      return "Cyber City Weather: 22°C and Clear ☀️";
     }
 
     // 6. About C.A.R. / Who are you
@@ -497,7 +511,7 @@ export const CyberCatCompanion: React.FC = () => {
       isThinkingRef.current = false;
       setAvatarState('chatting');
 
-      // 2. SPEAK REPLY ALOUD VIA TTS, THEN AUTOMATICALLY RE-ENABLE MIC FOR NEXT COMMAND!
+      // 2. SPEAK REPLY ALOUD VIA TTS WITH NATURAL TIME/TEMP PHONETICS, THEN RE-ENABLE MIC!
       speakCARText(botReply, () => {
         setAvatarState('idle');
         setIsCapturingCommand(false);
