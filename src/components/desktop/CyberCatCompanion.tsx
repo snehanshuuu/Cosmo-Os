@@ -9,7 +9,8 @@ import * as Icons from 'lucide-react';
 
 interface ChatMessage {
   id: string;
-  sender: 'car' | 'user';
+  role: 'user' | 'car';
+  sender?: 'user' | 'car';
   text: string;
 }
 
@@ -79,8 +80,9 @@ export const CyberCatCompanion: React.FC = () => {
   const [chatLog, setChatLog] = useState<ChatMessage[]>([
     {
       id: 'msg-1',
+      role: 'car',
       sender: 'car',
-      text: "Hello Commander! I am C.A.R. Say 'Hey Kitty' or type any command (e.g., 'open calculator', 'play music', 'status')!",
+      text: "[CAR_AI]: Greetings Admin! Systems operational. Type or speak commands like 'hi', 'status', 'open calculator', or 'help'!",
     },
   ]);
 
@@ -161,10 +163,12 @@ export const CyberCatCompanion: React.FC = () => {
 
       // Mute filter against C.A.R.'s own spoken response phrases
       if (
-        normalized.includes('voice command accepted') ||
+        normalized.includes('greetings admin') ||
+        normalized.includes('systems operational') ||
+        normalized.includes('command accepted') ||
         normalized.includes('launching') ||
         normalized.includes('telemetry') ||
-        normalized.includes('commander') ||
+        normalized.includes('cosmos database') ||
         normalized.includes('car response')
       ) {
         return;
@@ -353,11 +357,34 @@ export const CyberCatCompanion: React.FC = () => {
     }, 1000);
   };
 
-  // Comprehensive C.A.R. Intelligent Voice & Text Command Engine
+  // Interactive Question-Answering Response Generator Engine
   const generateCARAnswer = (query: string): string => {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
 
-    // Voice / App Opening Directives
+    // 1. Greetings ("hi", "hello", "hey")
+    if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ') || q.startsWith('hey ')) {
+      return "[CAR_AI]: Greetings Admin! Systems operational.";
+    }
+
+    // 2. Time / Weather
+    if (q.includes('time') || q.includes('clock') || q.includes('date') || q.includes('weather') || q.includes('temp')) {
+      return `[CAR_AI]: Synced with Global Node Clock. Current Time: ${new Date().toLocaleTimeString()}`;
+    }
+
+    // 3. Help / Terminal / Diagnostics
+    if (
+      q.includes('help') ||
+      q.includes('terminal') ||
+      q.includes('ping') ||
+      q.includes('sys_init') ||
+      q.includes('telemetry') ||
+      q.includes('diagnose') ||
+      q.includes('status')
+    ) {
+      return "[CAR_AI]: Available commands: ping, sys_init, telemetry, diagnose.";
+    }
+
+    // 4. Voice / App Opening Directives
     if (q.includes('open') || q.includes('launch') || q.includes('show')) {
       const appMap: Record<string, { id: AppId; title: string }> = {
         calculator: { id: 'calculator', title: 'Calculator' },
@@ -379,29 +406,19 @@ export const CyberCatCompanion: React.FC = () => {
       for (const [key, app] of Object.entries(appMap)) {
         if (q.includes(key)) {
           openApp(app.id, app.title);
-          return `Voice Command Accepted :: Launching ${app.title} window for you! 🚀`;
+          return `[CAR_AI]: Command Accepted :: Launching ${app.title} window for you! 🚀`;
         }
       }
     }
 
-    // Music playback voice directive
+    // 5. Music playback voice directive
     if (q.includes('play music') || q.includes('pause music') || q.includes('toggle music')) {
       togglePlay();
       openApp('music-player', 'Music Player');
-      return isPlaying ? "Pausing audio track playback 🎵" : "Playing audio track in Mini Player 🎵";
+      return isPlaying ? "[CAR_AI]: Pausing audio track playback 🎵" : "[CAR_AI]: Playing audio track in Mini Player 🎵";
     }
 
-    // 1. System Shortcuts & Commands
-    if (q.includes('help') || q.includes('command') || q.includes('shortcut')) {
-      return "C.A.R. Voice Directives :: Try saying 'Hey Kitty, open calculator', 'Hey Kitty, play music', 'status', or 'reset layout'!";
-    }
-
-    // 2. Telemetry & Diagnostics
-    if (q.includes('status') || q.includes('cpu') || q.includes('ram') || q.includes('system') || q.includes('battery')) {
-      return "C.A.R. Telemetry :: CPU Load: 24% | RAM: 68% | Battery: 98% | Network: 142.4 Mbps.";
-    }
-
-    // 3. Reset Layout Command
+    // 6. Reset Layout Command
     if (q.includes('reset') || q.includes('layout')) {
       resetDashboardLayout();
       pushNotification({
@@ -410,52 +427,21 @@ export const CyberCatCompanion: React.FC = () => {
         type: 'info',
         duration: 3000,
       });
-      return "Restored default desktop widget grid layout for you! 🐾";
+      return "[CAR_AI]: Restored default desktop widget grid layout! 🐾";
     }
 
-    // 4. Time / Clock
-    if (q.includes('time') || q.includes('clock') || q.includes('date')) {
-      return `Current Local Time is ${new Date().toLocaleTimeString()} ⏰`;
-    }
-
-    // 5. Weather
-    if (q.includes('weather') || q.includes('temp')) {
-      return "Cyber City Weather: 72°F and Clear ☀️";
-    }
-
-    // 6. About C.A.R. / Who are you
-    if (q.includes('who are you') || q.includes('car') || q.includes('name')) {
-      return "I am C.A.R. — your Cybernetic Assistant Companion on Cosmos OS! Say 'Hey Kitty' anytime to command me! 🐱⚡";
-    }
-
-    // 7. About Cosmos OS
-    if (q.includes('cosmos') || q.includes('os') || q.includes('desktop')) {
-      return "Cosmos OS is a next-gen cybernetic operating system with floating glass widgets and 3D Fiber background!";
-    }
-
-    // 8. Greetings & Small Talk
-    if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('good morning') || q.includes('good evening')) {
-      return "Hello Commander! C.A.R. is online and listening. How can I help you today? ☕✨";
-    }
-
-    // 9. Math / Calculator assistance
+    // 7. Math / Calculator assistance
     if (q.match(/^[\d\s\+\-\*\/\(\)\.]+$/)) {
       try {
         const result = new Function(`return (${query})`)();
-        return `C.A.R. Math Result: ${query} = ${result}`;
+        return `[CAR_AI]: Math Result: ${query} = ${result}`;
       } catch (err) {
-        return "C.A.R. encountered a math evaluation error.";
+        return "[CAR_AI]: Math evaluation error.";
       }
     }
 
-    // 10. General AI Query Fallbacks
-    const fallbackAnswers = [
-      `C.A.R. AI Analysis :: Voice query '${query}' processed cleanly!`,
-      `I've logged '${query}' in system memory. All diagnostic threads remain nominal!`,
-      `C.A.R. Response :: Cross-referenced '${query}' with Cosmos OS telemetry.`,
-    ];
-
-    return fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
+    // 8. Default/General questions
+    return "[CAR_AI]: Query indexed into COSMOS database. Processing node: OK.";
   };
 
   const processCARCommand = (rawQuery: string) => {
@@ -474,45 +460,58 @@ export const CyberCatCompanion: React.FC = () => {
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
+      role: 'user',
       sender: 'user',
       text: query,
     };
 
+    // Store message & Clear input immediately after sending!
     setChatLog((prev) => [...prev, userMsg]);
     setInputVal('');
 
     setTimeout(() => {
       const botReply = generateCARAnswer(query);
 
-      setChatLog((prev) => [
-        ...prev,
-        {
-          id: `car-${Date.now()}`,
-          sender: 'car',
-          text: botReply,
-        },
-      ]);
-
       setIsThinking(false);
       isThinkingRef.current = false;
       setAvatarState('chatting');
 
-      // 2. SPEAK REPLY ALOUD VIA TTS, THEN AUTOMATICALLY RE-ENABLE MIC FOR NEXT COMMAND!
-      speakCARText(botReply, () => {
-        setAvatarState('idle');
-        setIsCapturingCommand(false);
-        isCapturingCommandRef.current = false;
+      // Typewriter effect: Smooth appearance into chat history stream
+      const carMsgId = `car-${Date.now()}`;
+      setChatLog((prev) => [
+        ...prev,
+        { id: carMsgId, role: 'car', sender: 'car', text: '' },
+      ]);
 
-        // AUTOMATICALLY RE-START MIC FOR SUBSEQUENT COMMANDS!
-        if (isWakeWordModeRef.current) {
-          setTimeout(() => {
-            try {
-              recognitionRef.current?.start();
-            } catch (e) {}
-          }, 300);
+      let idx = 0;
+      const typeInterval = setInterval(() => {
+        idx += 3;
+        const chunk = botReply.slice(0, idx);
+        setChatLog((prev) =>
+          prev.map((msg) => (msg.id === carMsgId ? { ...msg, text: chunk } : msg))
+        );
+
+        if (idx >= botReply.length) {
+          clearInterval(typeInterval);
+
+          // 2. SPEAK REPLY ALOUD VIA TTS, THEN AUTOMATICALLY RE-ENABLE MIC FOR NEXT COMMAND!
+          speakCARText(botReply, () => {
+            setAvatarState('idle');
+            setIsCapturingCommand(false);
+            isCapturingCommandRef.current = false;
+
+            // AUTOMATICALLY RE-START MIC FOR SUBSEQUENT COMMANDS!
+            if (isWakeWordModeRef.current) {
+              setTimeout(() => {
+                try {
+                  recognitionRef.current?.start();
+                } catch (e) {}
+              }, 300);
+            }
+          });
         }
-      });
-    }, 800);
+      }, 20);
+    }, 700);
   };
 
   const handleSend = (e?: React.FormEvent) => {
@@ -581,11 +580,11 @@ export const CyberCatCompanion: React.FC = () => {
               {chatLog.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.role === 'user' || msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-[85%] p-2 rounded-xl text-[11px] leading-relaxed ${
-                      msg.sender === 'user'
+                      msg.role === 'user' || msg.sender === 'user'
                         ? 'bg-cosmos-lime text-black font-semibold shadow-lime-glow'
                         : 'bg-white/10 border border-white/15 text-white'
                     }`}
@@ -599,7 +598,7 @@ export const CyberCatCompanion: React.FC = () => {
               {isThinking && (
                 <div className="flex justify-start">
                   <div className="bg-white/10 border border-cosmos-lime/40 text-cosmos-lime-bright px-3 py-1.5 rounded-xl text-[11px] font-mono flex items-center gap-2 animate-pulse">
-                    <span>C.A.R. is thinking...</span>
+                    <span>CAR is processing...</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce" />
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.2s]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-cosmos-lime animate-bounce [animation-delay:0.4s]" />
