@@ -21,11 +21,13 @@ export const TopBar: React.FC<TopBarProps> = ({
     <div className="fixed top-0 left-0 right-0 h-8 z-40 bg-cosmos-surface/80 backdrop-blur-glass border-b border-white/10 px-4 flex items-center justify-between text-xs font-mono select-none">
       {/* Brand logo & Active App Menu */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1.5 font-display font-extrabold text-white">
-          <span className="w-4 h-4 rounded bg-cosmos-lime text-black flex items-center justify-center text-[10px] font-bold">
-            C
-          </span>
-          <span className="tracking-wider">COSMOS OS</span>
+        <div className="flex items-center gap-2 font-display font-extrabold text-white cursor-pointer hover:opacity-90 transition-opacity">
+          <img
+            src="/logo.png"
+            alt="COSMOS OS Logo"
+            className="w-5 h-5 rounded-full object-cover border border-cosmos-lime/80 shadow-[0_0_12px_rgba(124,255,0,0.6)]"
+          />
+          <span className="tracking-wider text-xs font-bold text-white">COSMOS OS</span>
         </div>
 
         {activeWindow && (
