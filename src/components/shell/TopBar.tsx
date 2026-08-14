@@ -23,7 +23,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 font-display font-extrabold text-white cursor-pointer hover:opacity-90 transition-opacity">
           <img
-            src="/logo.png"
+            src="/logo.svg"
             alt="COSMOS OS Logo"
             className="w-5 h-5 rounded-full object-cover border border-cosmos-lime/80 shadow-[0_0_12px_rgba(124,255,0,0.6)]"
           />
